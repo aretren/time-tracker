@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Additional styles for admin page */
+        .project-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+        .project-list-item {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .project-list-item a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .project-list-item a:hover {
+            color: var(--primary-color);
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        .button-link {
+            width: auto;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 4px;
+            align-self: center;
+        }
+        .create-project-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.visible {
+            display: flex;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 2rem;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .user-checkbox-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        .user-checkbox-item {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Панель администратора</h1>
+                <span id="username-display"></span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Проекты</h2>
+                <button id="create-project-btn-header" class="button-link">Добавить проект</button>
+            </div>
+            <ul id="project-list" class="project-list">
+                <!-- Project items will be injected here by JavaScript -->
+            </ul>
+            <div class="header-actions" style="margin-top: 2rem;">
+                <a href="app.html" class="button-link">Мое расписание</a>
+                <a href="index.html" class="button-link">Регистрация участника</a>
+                <a href="admin_register.html" class="button-link">Регистрация администратора</a>
+            </div>
+        </main>
+
+        <button id="create-project-btn" class="create-project-btn">+</button>
+    </div>
+
+    <!-- Create Project Modal -->
+    <div id="create-project-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Создать новый проект</h2>
+            <form id="create-project-form">
+                <div class="form-group">
+                    <label for="project-name">Название проекта</label>
+                    <input type="text" id="project-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Участники</label>
+                    <div id="user-list-checkboxes" class="user-checkbox-list">
+                        <!-- User checkboxes will be injected here -->
+                    </div>
+                </div>
+                <button type="submit">Создать проект</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="admin.js"></script>
+
+</body>
+</html>

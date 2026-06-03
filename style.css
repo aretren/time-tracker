@@ -1,0 +1,578 @@
+/* --- Global & Variables --- */
+:root {
+    --status-busy: #ff6b6b;
+    --status-free: #7bed9f;
+    --status-uncertain: #feca57;
+
+    --status-undefined: #dcdde1;
+    --primary-color: #007BFF;
+    --primary-hover: #0056b3;
+    --light-gray: #f4f4f4;
+    --white: #fff;
+    --dark-text: #333;
+    --border-color: #ddd;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--light-gray);
+    margin: 0;
+    color: var(--dark-text);
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Standard syntax */
+}
+
+/* --- Login & Registration Page --- */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.form-wrapper {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- App Layout --- */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    z-index: 10;
+}
+
+.header-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header h1 {
+    font-size: 1.25rem;
+    margin: 0;
+    margin-bottom: 0.15rem;
+}
+
+#username-display {
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.main-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.top-panel {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+#calendar-container {
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+}
+
+#calendar-container .vanilla-calendar {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.vanilla-calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+}
+.vanilla-calendar-header > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.vanilla-calendar-month,
+.vanilla-calendar-weeks {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.vanilla-calendar-day__btn {
+    padding: 0.2em;
+    font-size: 0.8em;
+    line-height: 1.2;
+    height: auto;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+}
+
+/* --- Brushes --- */
+.brushes {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.brush {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+}
+
+.brush:hover {
+    transform: scale(1.1);
+}
+
+.brush.active {
+    border-color: var(--primary-color);
+}
+.brush.clear {
+    background-color: var(--white);
+    border: 2px dashed var(--border-color);
+}
+.brush[data-status="busy"] { background-color: var(--status-busy); }
+.brush[data-status="free"] { background-color: var(--status-free); }
+.brush[data-status="undefined"] { background-color: var(--status-uncertain); }
+
+/* --- Hourly Schedule --- */
+#hourly-schedule {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 8px;
+    background: var(--white);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.hour-slot-container {
+    position: relative;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    aspect-ratio: 1 / 1; /* Make it square-like */
+}
+
+.hour-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(0,0,0,0.6);
+    z-index: 2; /* Ensure label is above the fill */
+    pointer-events: none; /* Make sure it doesn't interfere with clicks */
+}
+
+.hour-fill-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none; /* Pass clicks through to the container */
+}
+
+.fill-segment {
+    height: 100%;
+    transition: background-color 0.15s, flex-grow 0.2s;
+}
+
+.fill-segment.status-busy { background-color: var(--status-busy); }
+.fill-segment.status-free { background-color: var(--status-free); }
+.fill-segment.status-undefined { background-color: var(--status-uncertain); }
+
+
+/* --- Radial Menu --- */
+#radial-menu {
+    position: fixed;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.2s;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+#radial-menu.visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.radial-segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transition: background-color 0.1s;
+    opacity: 0.5;
+}
+.radial-segment.active {
+    opacity: 0.9;
+}
+
+
+/* Using clip-path to create wedges for 6 segments */
+.radial-segment[data-value="1"] { clip-path: polygon(50% 50%, 50% 0, 86.6% 25%); }
+.radial-segment[data-value="2"] { clip-path: polygon(50% 50%, 86.6% 25%, 86.6% 75%); }
+.radial-segment[data-value="3"] { clip-path: polygon(50% 50%, 86.6% 75%, 50% 100%); }
+.radial-segment[data-value="4"] { clip-path: polygon(50% 50%, 50% 100%, 13.4% 75%); }
+.radial-segment[data-value="5"] { clip-path: polygon(50% 50%, 13.4% 75%, 13.4% 25%); }
+.radial-segment[data-value="6"] { clip-path: polygon(50% 50%, 13.4% 25%, 50% 0); }
+
+
+#radial-menu-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    background-color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    pointer-events: none; /* Center doesn't capture mouse events */
+}
+#radial-menu-center:before {
+    content: "Отмена";
+    font-size: 0.7rem;
+    color: #888;
+}
+
+#radial-menu-center.has-value:before {
+    content: attr(data-text);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+
+/* --- Responsive Design --- */
+@media (min-width: 768px) {
+    .app-header {
+        padding: 1rem 2rem;
+    }
+    .main-content {
+        padding: 1.5rem;
+    }
+    .top-panel {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+    #calendar-container {
+        flex: 1 1 0px;
+        min-width: 0;
+    }
+    .brushes {
+        flex-direction: column;
+        border-top: none;
+    }
+}
+
+.widget {
+    background: var(--white);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+}
+.widget h2 {
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+/* --- Project Page Specific Layout --- */
+.project-page-layout {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+}
+
+.back-link {
+    text-decoration: none;
+    color: inherit;
+    margin-right: 1rem;
+}
+
+#project-name-header {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#combined-schedule-grid {
+    display: grid;
+    grid-template-columns: auto repeat(24, 45px); /* Increased width */
+    gap: 1px; /* Tighter gap */
+    font-size: 0.8rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1px;
+    border: 1px solid var(--border-color); /* Add border */
+    background-color: var(--border-color); /* Grid line color */
+}
+.grid-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 4px 0;
+    font-size: 0.75rem; /* Slightly larger font */
+    position: sticky;
+    top: 0;
+    background: var(--white);
+    z-index: 3; /* Higher z-index */
+    border-bottom: 1px solid var(--border-color);
+}
+.user-row-label {
+    font-weight: bold;
+    padding: 4px 8px;
+    text-align: right;
+    position: sticky;
+    left: 0;
+    background: var(--white);
+    z-index: 2;
+    min-width: 90px; /* Increased width */
+    border-right: 1px solid var(--border-color);
+}
+.hour-cell {
+    min-width: 45px; /* Increased width */
+    height: 40px;
+    background-color: #f7f7f7; /* Lighter background */
+    display: flex;
+    justify-content: center; /* Center content */
+    align-items: center; /* Center content */
+}
+.availability-bar {
+    height: 100%;
+    opacity: 0.8; /* Slightly more opaque */
+}
+.bar-free { background-color: var(--status-free); }
+.bar-busy { background-color: var(--status-busy); }
+.bar-undefined { background-color: var(--status-uncertain); }
+
+.add-form {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.add-form .form-group {
+    margin: 0;
+}
+.add-form input, .add-form select, .add-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+.add-form textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.participant-list, .training-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.participant-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.remove-participant-btn {
+    background: none;
+    border: none;
+    color: var(--status-busy);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+}
+
+.training-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.training-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.training-details p { 
+    margin: 0;
+    word-break: break-word;
+}
+.training-details strong {
+    color: #555;
+}
+.training-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+.training-actions button {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    width: auto;
+    border-radius: 3px;
+}
+.delete-training-btn {
+    background-color: var(--status-busy);
+    color: white;
+}
+.edit-training-btn {
+     background-color: var(--status-uncertain);
+     color: white;
+}
+.save-training-btn {
+    background-color: var(--status-free);
+    color: white;
+}
+.edit-training-input, .edit-training-datetime {
+    width: 100%;
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* Calendar Highlighting */
+.vanilla-calendar-day__btn.highlight-green {
+    background-color: #7bed9f;
+    color: var(--dark-text);
+}
+.vanilla-calendar-day__btn.highlight-yellow {
+    background-color: #feca57;
+    color: var(--dark-text);
+}
+
+
+/* --- Desktop Layout --- */
+@media (min-width: 1024px) {
+    .project-page-layout {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    .app-header #username-display {
+        display: block;
+    }
+}
