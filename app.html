@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@uvarov.frontend/vanilla-calendar/build/vanilla-calendar.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Time Tracker</h1>
+                <span id="username-display"></span>
+            </div>
+            <div class="header-actions">
+                <a href="admin.html" id="admin-panel-link" class="header-btn hidden" title="Панель администратора">&#8592;</a>
+                <a href="participant.html" id="participant-page-link" class="header-btn" title="Мои проекты">PJ</a>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="top-panel">
+                <div id="calendar-container"></div>
+                <div class="brushes">
+                    <div class="brush active" data-status="busy"></div>
+                    <div class="brush" data-status="free"></div>
+                    <div class="brush" data-status="undefined"></div>
+                    <div class="brush clear" data-status="clear"></div>
+                </div>
+            </div>
+
+            <div id="hourly-schedule">
+                <!-- Часы будут генерироваться здесь -->
+            </div>
+
+            <div class="widget" id="incomplete-days-widget">
+                <div class="widget-header">
+                    <h2>Незаполненные дни</h2>
+                    <div class="widget-controls">
+                        <button id="prev-month-btn" class="widget-nav-btn">&lt;</button>
+                        <span id="incomplete-month-display"></span>
+                        <button id="next-month-btn" class="widget-nav-btn">&gt;</button>
+                    </div>
+                </div>
+                <div id="incomplete-days-list">
+                    <p>Загрузка данных...</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Radial Menu for time selection -->
+    <div id="radial-menu" class="hidden">
+        <div class="radial-segment" data-value="1"></div>
+        <div class="radial-segment" data-value="2"></div>
+        <div class="radial-segment" data-value="3"></div>
+        <div class="radial-segment" data-value="4"></div>
+        <div class="radial-segment" data-value="5"></div>
+        <div class="radial-segment" data-value="6"></div>
+        <div id="radial-menu-center"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@uvarov.frontend/vanilla-calendar/build/vanilla-calendar.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
