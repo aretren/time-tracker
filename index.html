@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация нового участника</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="admin.html" class="back-button" title="Вернуться на панель администратора">&#8592;</a>
+    <div class="container">
+        <div class="form-wrapper">
+            <h1>Регистрация нового участника</h1>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="login">Логин</label>
+                    <input type="text" id="login" name="login" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Зарегистрировать</button>
+            </form>
+            <p id="success-message" class="hidden">Участник успешно зарегистрирован!</p>
+        </div>
+
+        <div class="user-list-container form-wrapper" style="margin-top: 2rem; width: 100%; max-width: 400px;">
+            <h2 style="text-align: center;">Список участников</h2>
+            <div id="participant-list">
+                <!-- Participants will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <!-- Add SDKs for Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
