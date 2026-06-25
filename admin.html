@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Панель администратора</h1>
+                <span id="username-display"></span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Проекты</h2>
+                <button id="create-project-btn-header" class="header-btn" title="Добавить проект">+</button>
+            </div>
+            <div id="project-list" class="project-container">
+                <!-- Project items will be injected here by JavaScript -->
+            </div>
+
+            <!-- Archive Section -->
+            <details class="archive-section widget">
+                <summary class="archive-summary">Архив</summary>
+                <div id="archived-project-list" class="project-container">
+                    <!-- Archived projects will be injected here -->
+                </div>
+            </details>
+
+            <div class="admin-actions" style="margin-top: 2rem;">
+                <a href="app.html" class="button-link">Мое расписание</a>
+                <a href="index.html" class="button-link">Регистрация участника</a>
+                <button id="register-admin-btn" class="button-link">Регистрация администратора</button>
+            </div>
+        </main>
+
+
+    </div>
+
+    <!-- Create Project Modal -->
+    <div id="create-project-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Создать новый проект</h2>
+            <form id="create-project-form">
+                <div class="form-group">
+                    <label for="project-name">Название проекта</label>
+                    <input type="text" id="project-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Участники</label>
+                    <div id="user-list-checkboxes" class="user-checkbox-list">
+                        <!-- User checkboxes will be injected here -->
+                    </div>
+                </div>
+                <button type="submit">Создать проект</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Admin Modal -->
+    <div id="register-admin-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Управление администраторами</h2>
+            
+            <!-- Assign Admin Section -->
+            <form id="register-admin-form">
+                <h4>Назначить роль</h4>
+                <div class="form-group">
+                    <label for="user-select-for-admin">Выберите участника</label>
+                    <select id="user-select-for-admin" required>
+                        <!-- User options will be injected here by JS -->
+                    </select>
+                </div>
+                <button type="submit">Назначить роль</button>
+            </form>
+            <p id="register-success-message" class="hidden" style="color: green; margin-top: 1rem;">Роль администратора успешно назначена!</p>
+
+            <!-- Current Admins Section -->
+            <h4 style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">Текущие администраторы</h4>
+            <div id="current-admins-list"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="admin.js"></script>
+
+</body>
+</html>
