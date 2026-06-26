@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои проекты и тренировки</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Мои проекты и тренировки</h1>
+                <span id="username-display"></span>
+            </div>
+            <a href="app.html" class="header-back-btn" title="Вернуться к трекеру">&#8592;</a>
+        </header>
+
+        <main class="main-content" style="padding: 1rem;">
+            <div id="projects-container">
+                <!-- Проекты и тренировки будут загружены сюда -->
+                <p>Загрузка данных...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="participant.js"></script>
+</body>
+</html>

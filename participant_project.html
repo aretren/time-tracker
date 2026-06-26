@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о проекте</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@uvarov.frontend/vanilla-calendar/build/vanilla-calendar.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="project-header-info">
+                <h1 id="project-name-header">Загрузка...</h1>
+                <span id="username-display"></span>
+            </div>
+            <a href="participant.html" class="header-back-btn" title="К моим проектам">&#8592;</a>
+        </header>
+
+        <main class="main-content project-page-layout">
+            <div class="schedule-column">
+                <div class="widget">
+                    <h2>Календарь тренировок</h2>
+                    <div id="calendar-container"></div>
+                </div>
+                <div class="widget">
+                    <h2>Предстоящие тренировки</h2>
+                    <ul id="training-list" class="training-list"></ul>
+                </div>
+            </div>
+            <div class="management-column">
+                <div class="widget">
+                    <h2>Участники и партии</h2>
+                    <ul id="participant-roles-list" class="role-list"></ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@uvarov.frontend/vanilla-calendar/build/vanilla-calendar.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="participant_project.js"></script>
+</body>
+</html>

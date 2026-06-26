@@ -1,0 +1,1421 @@
+
+@keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: var(--glow-shadow), 0 0 8px 1px rgba(105, 240, 174, 0.45); }
+    50% { box-shadow: var(--glow-shadow), 0 0 16px 4px rgba(105, 240, 174, 0.65); }
+    100% { box-shadow: var(--glow-shadow), 0 0 8px 1px rgba(105, 240, 174, 0.45); }
+}
+
+@keyframes block-appear {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Global & Variables --- */
+:root {
+    --status-busy: #ff8a80; /* Softer red */
+    --status-free: #69f0ae; /* Brighter green */
+    --status-training: #a0c4ff; /* A nice blue for trainings */
+    --status-uncertain: #ffe57f; /* Yellow - was orange */
+    --status-maybe: #ccff90; /* Light Lime - for "Okay" days */
+    --status-good: #b9f6ca; /* Light Green - for "Good" days */
+
+    --status-undefined: #e0e0e0;
+    --primary-color: #ff8a65; /* Deep orange accent */
+    --primary-hover: #ffab91; /* Lighter orange */
+    --light-gray: #f5f5f5;
+    --white: #fff;
+    --dark-text: #424242; /* Darker gray for better contrast */
+    --border-color: rgba(255, 255, 255, 0.3); /* Transparent white for borders */
+    
+    /* New variables for the glass effect */
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-blur: 12px;
+    --glow-shadow: 0 8px 32px 0 rgba(255, 109, 60, 0.3); /* Glow effect using primary color */
+    --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    /* Muted pastel colors for the background */
+    background: linear-gradient(-45deg, #f8b195, #f67280, #a8d8ea, #c0e6de);
+    background-size: 400% 400%;
+    animation: gradient-animation 25s ease infinite; /* Slower animation */
+    margin: 0;
+    color: var(--dark-text);
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Standard syntax */
+}
+
+/* --- Glassmorphism Panels --- */
+.form-wrapper,
+.app-header,
+.top-panel,
+#hourly-schedule,
+.widget,
+.project,
+.modal-content {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--glow-shadow);
+    position: relative; /* This is crucial for the pseudo-element */
+
+    /* Анимация появления и плавного изменения размера */
+    animation: block-appear 0.5s ease-out forwards;
+    /* Используем max-height для плавной анимации высоты */
+    transition: max-height 0.5s ease-in-out;
+}
+
+.is-loading {
+    animation: pulse-glow 2.5s infinite ease-in-out !important;
+    min-height: 150px; /* Задаем минимальную высоту */
+    z-index: 1; /* Поднимает виджет над соседями, чтобы свечение не обрезалось */
+    max-height: 150px; /* Ограничиваем максимальную высоту для анимации */
+}
+
+.widget.is-loading, #calendar-container.is-loading {
+    animation: pulse-glow 2.5s infinite ease-in-out !important;
+    min-height: 150px; /* Задаем минимальную высоту */
+    z-index: 1; /* Поднимает виджет над соседями, чтобы свечение не обрезалось */
+}
+
+/* Стили для плавной смены контента в виджетах */
+.widget > * {
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.widget.is-loading > *, #calendar-container.is-loading > * {
+    opacity: 0;
+    transform: translateY(10px); /* Слегка сдвигаем контент вниз, пока он невидимый */
+}
+
+
+/* --- Login & Registration Page --- */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.form-wrapper {
+    padding: 2.5rem;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-shadow: var(--text-shadow);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 138, 101, 0.4);
+}
+
+button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 0.85rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- App Layout --- */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem; /* Add gap between button, title, and user */
+    padding: 1rem 1.5rem;
+    z-index: 10;
+    margin: 1rem; /* Add margin around header */
+    width: calc(100% - 2rem);
+    box-sizing: border-box;
+}
+
+.header-title {
+    flex-grow: 1; /* Allow title to take up available space */
+}
+
+.project-header-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow this to take up space */
+    min-width: 0; /* Prevent overflow issues with flexbox */
+}
+
+.project-header-info h1, .project-header-info #project-name-header {
+    font-size: 1.35rem;
+    margin: 0;
+    margin-bottom: 0.15rem;
+}
+
+.project-header-info #username-display {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #616161;
+}
+
+.main-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0 1rem 1rem 1rem; /* Adjust padding */
+}
+
+
+.top-panel {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#calendar-container {
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    width: 100%; /* Ensure calendar container takes full width */
+}
+
+#calendar-container .vanilla-calendar {
+    width: 100% !important;
+    box-sizing: border-box;
+    background: transparent;
+}
+.vanilla-calendar * {
+    background: transparent !important;
+}
+
+.vanilla-calendar-day__btn {
+    padding: 0.2em;
+    font-size: 0.8em;
+    line-height: 1.2;
+    height: auto;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px; /* Softer radius */
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.vanilla-calendar-day__btn:hover {
+    border-color: var(--primary-hover);
+    background-color: rgba(255,255,255,0.2) !important;
+}
+
+.vanilla-calendar-day__btn_today {
+    border-color: var(--primary-color) !important;
+}
+
+
+/* --- Brushes --- */
+.brushes {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem; /* More space */
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.brush {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid rgba(255, 255, 255, 0.7);
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.brush:hover {
+    transform: scale(1.15);
+}
+
+.brush.active {
+    border-color: var(--primary-color);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px var(--primary-color);
+}
+.brush.clear {
+    background-color: transparent;
+    border: 2px dashed #aeaeae;
+}
+.brush[data-status="busy"] { background-color: var(--status-busy); }
+.brush[data-status="free"] { background-color: var(--status-free); }
+.brush[data-status="undefined"] { background-color: var(--status-uncertain); }
+.brush[data-status="maybe"] { background-color: var(--status-maybe); }
+.brush[data-status="good"] { background-color: var(--status-good); }
+.template-brush {
+    background-color: #a0c4ff;
+    color: var(--dark-text);
+    font-size: 1.5rem;
+    line-height: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    box-sizing: content-box !important; /* Force button to calculate size like other brushes */
+}
+
+/* --- Hourly Schedule --- */
+#hourly-schedule {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+    gap: 10px;
+    padding: 1.5rem;
+}
+
+.hour-slot-container {
+    position: relative;
+    background-color: rgba(0,0,0,0.05); /* Darker, less obtrusive background */
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    border: 1px solid transparent; /* Remove default border */
+    aspect-ratio: 1 / 1;
+    transition: all 0.2s ease;
+}
+.hour-slot-container:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-hover);
+}
+
+.hour-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(0,0,0,0.7);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hour-fill-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.fill-segment {
+    height: 100%;
+    transition: background-color 0.15s, flex-grow 0.2s;
+    /* mix-blend-mode: screen; REMOVED FOR BETTER VISIBILITY */
+}
+
+.fill-segment.status-busy { background-color: var(--status-busy); }
+.fill-segment.status-free { background-color: var(--status-free); }
+.fill-segment.status-undefined { background-color: var(--status-uncertain); }
+
+
+/* --- Radial Menu --- */
+#radial-menu {
+    position: fixed;
+    width: 200px; /* Larger */
+    height: 200px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--glow-shadow);
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.2s;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+#radial-menu.visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+.radial-segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    opacity: 0.8; /* Increased opacity */
+}
+.radial-segment:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+.radial-segment.active {
+    opacity: 1; /* Fully opaque */
+    transform: scale(1.1);
+}
+    transform: scale(1.1);
+}
+
+.radial-segment[data-value="1"] { clip-path: polygon(50% 50%, 50% 0, 86.6% 25%); }
+.radial-segment[data-value="2"] { clip-path: polygon(50% 50%, 86.6% 25%, 86.6% 75%); }
+.radial-segment[data-value="3"] { clip-path: polygon(50% 50%, 86.6% 75%, 50% 100%); }
+.radial-segment[data-value="4"] { clip-path: polygon(50% 50%, 50% 100%, 13.4% 75%); }
+.radial-segment[data-value="5"] { clip-path: polygon(50% 50%, 13.4% 75%, 13.4% 25%); }
+.radial-segment[data-value="6"] { clip-path: polygon(50% 50%, 13.4% 25%, 50% 0); }
+
+
+#radial-menu-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background-color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    pointer-events: none;
+}
+#radial-menu-center:before {
+    content: "Отмена";
+    font-size: 0.8rem;
+    color: #888;
+}
+
+#radial-menu-center.has-value:before {
+    content: attr(data-text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+
+/* --- Responsive Design --- */
+@media (min-width: 768px) {
+    .app-header {
+        padding: 1rem 2rem;
+        margin: 1.5rem;
+        width: calc(100% - 3rem);
+    }
+    .main-content {
+        padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+    .top-panel {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+    #calendar-container {
+        flex: 1 1 0px;
+        min-width: 0;
+    }
+    .brushes {
+        flex-direction: column;
+        border-top: none;
+        border-left: 1px solid var(--border-color);
+        padding-left: 1.5rem;
+        margin-top: 0;
+        gap: 1.5rem;
+    }
+}
+
+.widget {
+    /* Добавляем padding и отрицательный margin для пространства под свечение */
+    padding: 1.5rem 1.5rem 2.5rem 1.5rem; /* Увеличиваем нижний padding */
+    margin-bottom: 1.5rem;
+    max-height: 1000px; /* Устанавливаем большой max-height для конечного состояния */
+    position: relative; /* Необходимо для дочерних элементов */
+    overflow: visible; /* Позволяет box-shadow выходить за пределы */
+}
+.widget h2 {
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+/* --- Project Page Specific Layout --- */
+.project-page-layout {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+}
+
+.project-header-actions {
+    margin-left: 1rem; /* Space between title and button */
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+/* Renamed from .back-button to be more generic */
+.header-action-btn {
+    background-color: transparent;
+    color: var(--dark-text);
+    padding: 0.5rem 1rem;
+    border: none;
+    font-size: 1rem;
+    width: auto;
+    text-align: left;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+.header-action-btn { margin-left: 1rem; }
+
+.header-action-btn:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+#project-name-header {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#combined-schedule-grid {
+    display: grid;
+    grid-template-columns: auto repeat(14, 45px);
+    gap: 2px;
+    font-size: 0.8rem;
+    overflow: auto; /* Allow both horizontal and vertical scroll if needed */
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem; /* Add padding inside the container */
+    border: 1px solid var(--border-color);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-radius: 12px;
+    margin-top: 1rem;
+}
+.grid-header, .user-row-label, .hour-cell {
+    background: transparent; /* Make individual cells transparent */
+    backdrop-filter: none;
+}
+.grid-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 0.8rem;
+    position: -webkit-sticky; /* For Safari */
+    position: sticky; /* Stick to the top on scroll */
+    top: 0;
+    z-index: 3;
+    background: var(--glass-bg); /* Give header a background to cover content when scrolling */
+}
+.user-row-label {
+    font-weight: bold;
+    padding: 4px 8px;
+    text-align: right;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background: var(--glass-bg); /* Give label a background to cover content when scrolling */
+}
+.hour-cell {
+    min-width: 45px;
+    height: 20px;
+    border-radius: 4px;
+    background-color: rgba(0,0,0,0.05); /* A subtle background for empty cells */
+    position: relative; /* Needed for z-index to work with bars */
+}
+.hour-cell.is-training-hour {
+    background-color: var(--status-training);
+    z-index: 1; /* Ensure training color is on top */
+}
+
+/* Hide availability bars when the cell is a training hour */
+.hour-cell.is-training-hour .availability-bar {
+    display: none;
+}
+.availability-bar {
+    height: 100%;
+    opacity: 0.9;
+    border-radius: 4px;
+}
+.bar-free { background-color: var(--status-free); }
+.bar-busy { background-color: var(--status-busy); }
+.bar-undefined { background-color: var(--status-uncertain); }
+
+.add-form {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.add-form .form-group {
+    margin: 0;
+}
+.add-form input, .add-form select, .add-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: rgba(255,255,255,0.5);
+    box-sizing: border-box;
+}
+.add-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+.add-form input[type="datetime-local"] {
+    /* Fix for iOS where the date input can overflow its container */
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+/* Collapsible Widget Styles */
+.widget h2.collapsible-header {
+    cursor: pointer;
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+}
+
+.widget h2.collapsible-header::after {
+    content: '−'; /* Minus sign for expanded */
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.widget.collapsed h2.collapsible-header::after {
+    content: '+'; /* Plus sign for collapsed */
+}
+
+.widget.collapsed > *:not(h2) {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.role-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.role-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.role-item-name {
+    font-weight: 500;
+    padding-right: 1rem;
+}
+
+.role-item-input {
+    flex-grow: 1;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+.participant-list, .training-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.participant-item, .training-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.remove-participant-btn {
+    background: none;
+    border: none;
+    color: var(--status-busy);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+.remove-participant-btn:hover {
+    background-color: rgba(255,138,128, 0.2);
+}
+.training-details p { 
+    margin: 0;
+    word-break: break-word;
+}
+.training-details strong {
+    color: #555;
+}
+.training-actions button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+/* Styles for buttons inside edit mode */
+.training-actions .save-training-btn,
+.training-actions .delete-training-btn,
+.training-actions .cancel-training-btn {
+    margin-bottom: 0.5rem;
+    width: 40px; /* Fixed width for a square look */
+    height: 40px; /* Fixed height */
+    font-size: 1.2rem; /* Make icons bigger */
+    padding: 0; /* Remove padding to center icon */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.delete-training-btn {
+    background-color: var(--status-busy);
+}
+.edit-training-btn {
+     background-color: var(--status-uncertain);
+     color: var(--dark-text);
+}
+.cancel-training-btn {
+    background-color: #e0e0e0; /* Neutral gray */
+    color: var(--dark-text);
+}
+.save-training-btn {
+    background-color: var(--status-free);
+     color: var(--dark-text);
+}
+
+.back-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed; /* Изменено на fixed, чтобы кнопка оставалась на месте при скролле */
+    top: 1.5rem;
+    right: 1.5rem; /* Перемещаем вправо */
+    left: auto; /* Сбрасываем позиционирование слева */
+    line-height: 1;
+    z-index: 1001; /* Устанавливаем высокий z-index, чтобы кнопка была поверх всего */
+    flex-shrink: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: var(--dark-text);
+    border: 1px solid var(--border-color);
+    text-decoration: none; /* Убираем подчеркивание */
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Calendar Highlighting */
+.vanilla-calendar-day__btn.highlight-perfect {
+    background-color: #1E88E5 !important; /* Vibrant blue */
+    color: var(--white);
+    box-shadow: 0 0 8px 1px rgba(30, 136, 229, 0.7);
+}
+.vanilla-calendar-day__btn.highlight-good {
+    background-color: var(--status-free) !important; /* Bright green */
+    color: var(--dark-text);
+}
+.vanilla-calendar-day__btn.highlight-orange {
+    background-color: var(--status-uncertain) !important; /* Yellow */
+    color: var(--dark-text);
+}
+.vanilla-calendar-day__btn.highlight-yellow {
+    background-color: var(--status-maybe) !important; /* Light Lime */
+    color: var(--dark-text);
+}
+
+.vanilla-calendar-day__btn.highlight-project-training {
+    background-color: #a0c4ff !important; /* Blue for this project's trainings */
+    color: var(--dark-text);
+}
+
+.vanilla-calendar-day__btn.highlight-other-training {
+    background-color: #b9f6ca !important; /* Green for other trainings */
+    color: var(--dark-text);
+}
+
+.vanilla-calendar-day__btn.highlight-incomplete {
+    background-color: #ffd180 !important; /* An amber/orange color */
+    color: var(--dark-text);
+}
+
+
+/* --- Desktop Layout --- */
+@media (min-width: 1024px) {
+    .project-page-layout {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    .app-header #username-display {
+        display: block;
+    }
+}
+
+/* --- Admin Page --- */
+.project-container {
+    margin-top: 1rem;
+}
+.project {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.project:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px 0 rgba(255, 109, 60, 0.35);
+}
+.project-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+.project-action-btn {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--border-color);
+    color: var(--dark-text);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+.project-action-btn:hover {
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.9);
+}
+.delete-project-btn { background-color: var(--status-busy); }
+.archive-project-btn { background-color: var(--status-uncertain); }
+.restore-project-btn { background-color: var(--status-free); }
+
+/* Archive Section Styles */
+.archive-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+}
+.archive-summary {
+    font-size: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+.button-link {
+    width: auto;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-radius: 8px;
+    align-self: center;
+    text-align: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.button-link:hover {
+     background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Styles for action buttons on the admin page */
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch; /* Make buttons take full width */
+}
+.admin-actions .button-link {
+    width: 100%;
+    box-sizing: border-box;
+}
+.create-project-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 2.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    padding: 0;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    /* Align to top and add padding to prevent sticking to edges */
+    align-items: flex-start;
+    padding: 2rem 0;
+    overflow-y: auto; /* Allow scrolling the whole modal container if needed */
+}
+.modal.visible {
+    display: flex;
+}
+.modal-content {
+    padding: 2.5rem;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    /* Allow content to scroll if it's too tall */
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+}
+.close-btn {
+    color: #9e9e9e;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.close-btn:hover {
+    color: var(--dark-text);
+}
+.user-checkbox-list {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    background-color: rgba(255,255,255,0.2);
+}
+.user-checkbox-item {
+    display: flex;
+    align-items: center; /* Vertically center the items */
+    padding: 0.75rem 0; /* Use padding instead of margin for spacing */
+    cursor: pointer;
+}
+
+.user-checkbox-item:not(:last-child) {
+    border-bottom: 1px solid var(--border-color); /* Add a neat separator line */
+}
+
+.user-item-name-wrapper {
+    flex-grow: 1; /* This is the key: make the name container take all available space */
+    min-width: 0; /* Prevents overflow issues */
+}
+
+.user-item-checkbox-wrapper {
+    flex-shrink: 0; /* Prevent the checkbox container from shrinking */
+    padding-left: 1rem; /* Add some space so the checkbox isn't glued to the name */
+}
+
+.header-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    text-decoration: none;
+    color: var(--dark-text);
+    font-weight: bold;
+    font-size: 1rem;
+    font-size: 1.5rem; /* Adjusted icon size */
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+    padding: 0; /* Reset padding to ensure it's a circle */
+}
+
+.header-btn:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+/* New style for the back button inside a header, without fixed positioning */
+.header-back-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    text-decoration: none;
+    color: var(--dark-text);
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+    padding: 0; /* Reset padding to ensure it's a circle */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.header-back-btn:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Mobile & Tablet Responsive --- */
+@media (max-width: 767px) {
+    .form-wrapper {
+        padding: 2rem 1.5rem;
+    }
+
+    .app-header {
+        margin: 0.5rem;
+        width: calc(100% - 1rem);
+        padding: 0.75rem 1rem;
+    }
+    .main-content {
+        padding: 0 0.5rem 0.5rem 0.5rem;
+    }
+
+    .project-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .modal-content {
+        padding: 2rem 1rem;
+        width: calc(100% - 2rem);
+    }
+    
+    .create-project-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 2rem;
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+
+    .project-page-layout {
+        padding: 0.5rem;
+    }
+
+    .widget {
+        padding: 1rem;
+    }
+
+    .add-form {
+        gap: 0.5rem;
+    }
+
+     .app-header h1 {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-wrapper {
+        padding: 2rem 1rem;
+        width: calc(100% - 2rem);
+    }
+}
+
+/* Incomplete Days Widget */
+#incomplete-days-widget {
+    margin-top: 1.5rem;
+}
+
+.widget-header {
+    display: block; /* Changed from flex */
+    text-align: center; /* Center the content */
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.widget-header h2 {
+    margin: 0 0 0.5rem 0; /* Add margin at the bottom */
+    font-size: 1.3rem;
+    /* flex-grow: 1; no longer needed */
+}
+
+.widget-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem; /* Add space between buttons and text */
+}
+
+.widget-nav-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+}
+
+#incomplete-days-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.incomplete-day-item {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: var(--dark-text);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.incomplete-day-item:hover {
+    /* No hover effect needed */
+}
+
+/* --- Template Modal Styles --- */
+.modal-description {
+    font-size: 0.9rem;
+    color: #616161;
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.template-month-selector {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+#template-brushes {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#template-schedule {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+    gap: 10px;
+    padding: 1rem;
+    background-color: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.template-actions {
+    margin-top: 1.5rem;
+    display: flex;    
+    flex-direction: column; /* Main actions will be a column */
+    gap: 1rem;
+}
+
+.template-weekdays-actions {
+    display: flex;
+    justify-content: space-between; /* Distribute buttons evenly */
+    gap: 0.5rem; /* Smaller gap for weekday buttons */
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.weekday-btn {
+    flex-grow: 0 !important; /* Prevent growing */
+    flex-basis: 12%; /* Base width */
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 0.9rem;
+    background-color: rgba(255,255,255,0.4);
+    color: var(--dark-text);
+}
+
+.template-actions .button {
+    flex-grow: 1;
+}
+.template-actions #apply-all-days-btn {
+    background-color: #a0c4ff; /* A neutral blue color */
+    color: var(--dark-text);
+}
+.template-actions .button:last-child {
+    background-color: var(--status-admin-conflict);
+}
+
+/* --- Help Modal --- */
+.help-list {
+    list-style: none;
+    padding-left: 0;
+    text-align: left;
+}
+
+.help-list li {
+    padding: 0.75rem 0;
+    line-height: 1.6;
+}
+
+.help-list li:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.help-color-legend {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.help-color-legend div {
+    display: flex;
+    align-items: center;
+}
+
+.brush-legend {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* --- Floating Action Button (FAB) --- */
+.fab-container {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    font-size: 1.8rem;
+    display: flex; /* Keep flex for centering icon */
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 998;
+    transition: all 0.3s ease;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* --- Suggestion Box Styles --- */
+.suggestion-list-container {
+    margin-top: 1.5rem;
+    max-height: 40vh;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.suggestion-item.completed {
+    background-color: rgba(224, 224, 224, 0.3);
+    opacity: 0.8;
+}
+
+.suggestion-text {
+    word-break: break-word;
+    line-height: 1.5;
+}
+
+.suggestion-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #616161;
+}
+
+.suggestion-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.suggestion-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.suggestion-action-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.like-btn.liked {
+    color: var(--status-busy);
+}
+
+.like-count {
+    font-weight: 600;
+    min-width: 12px;
+}
+
+.delete-suggestion-btn { color: var(--status-busy); }
+.complete-suggestion-btn { color: var(--status-free); }
+
+#add-suggestion-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#add-suggestion-form input,
+#add-suggestion-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: rgba(255,255,255,0.5);
+    font-family: inherit;
+    font-size: 1rem;
+    box-sizing: border-box; /* Fix overflow issue */
+}
+
+#add-suggestion-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
