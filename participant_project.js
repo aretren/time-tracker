@@ -55,8 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const now = new Date();
         const upcomingTrainings = Object.values(trainings)
-            .filter(t => new Date(t.time) >= now)
-            .sort((a, b) => new Date(a.time) - new Date(b.time));
+            .map(t => ({...t, date: new Date(t.startTime || t.time)})) // Create a comparable date
+            .filter(t => t.date >= now && !isNaN(t.date)) // Filter out past and invalid
+            .sort((a, b) => a.date - b.date);
 
         if (upcomingTrainings.length === 0) {
             trainingListEl.innerHTML = '<li>Предстоящих тренировок нет.</li>';
@@ -66,14 +67,36 @@ document.addEventListener('DOMContentLoaded', () => {
         upcomingTrainings.forEach(training => {
             const li = document.createElement('li');
             li.className = 'training-item';
-            const d = new Date(training.time);
-            const formattedDate = d.toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' });
+            
+            let formattedDate;
+            if (training.startTime && training.endTime) { // New format
+                const startDate = new Date(training.startTime);
+                const endDate = new Date(training.endTime);
+                
+                const dateOptions = { day: 'numeric', month: 'short' };
+                const timeOptions = { hour: '2-digit', minute: '2-digit' };
+                
+                const formattedStartDate = startDate.toLocaleDateString('ru-RU', dateOptions);
+                const formattedStartTime = startDate.toLocaleTimeString('ru-RU', timeOptions);
+                const formattedEndTime = endDate.toLocaleTimeString('ru-RU', timeOptions);
+
+                if (startDate.toDateString() === endDate.toDateString()) {
+                    formattedDate = `${formattedStartDate}, ${formattedStartTime} - ${formattedEndTime}`;
+                } else {
+                    const formattedEndDate = endDate.toLocaleDateString('ru-RU', dateOptions);
+                    formattedDate = `${formattedStartDate} ${formattedStartTime} - ${formattedEndDate} ${formattedEndTime}`;
+                }
+            } else if (training.time) { // Old format
+                const d = new Date(training.time);
+                formattedDate = d.toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' });
+            }
+
             const locationText = training.location || 'Не указано';
             const commentText = training.comment || 'Нет';
 
             li.innerHTML = `
                 <div class="training-details">
-                    <p><strong>Дата:</strong> ${formattedDate}</p>
+                    <p><strong>Время:</strong> ${formattedDate || 'N/A'}</p>
                     <p><strong>Место:</strong> ${locationText}</p>
                     <p><strong>Комментарий:</strong> ${commentText}</p>
                 </div>
@@ -189,11 +212,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (project.members && project.members[loggedInUser] && project.trainings) {
                 const isCurrentProject = projId === projectId;
                 Object.values(project.trainings).forEach(training => {
-                    const date = new Date(training.time).toISOString().split('T')[0];
-                    if (isCurrentProject) {
-                        projectTrainingDates.add(date);
-                    } else {
-                        otherTrainingDates.add(date);
+                    const trainingTime = training.startTime || training.time;
+                    if (trainingTime) {
+                        try {
+                            const date = new Date(trainingTime).toISOString().split('T')[0];
+                            if (isCurrentProject) {
+                                projectTrainingDates.add(date);
+                            } else {
+                                otherTrainingDates.add(date);
+                            }
+                        } catch (e) {
+                           console.error("Skipping invalid training date:", trainingTime, e);
+                        }
                     }
                 });
             }
