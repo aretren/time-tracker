@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-title">
+                <h1>Time Tracker</h1>
+                <span id="username-display"></span>
+            </div>
+            <div class="header-actions">
+                <button id="help-btn" class="header-btn" title="Помощь">?</button>
+                <a href="participant.html" id="participant-page-link" class="header-btn" title="Мои проекты">PJ</a>
+                <a href="admin.html" id="admin-panel-link" class="header-btn hidden" title="Панель администратора">&#8592;</a>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="top-panel">
+                <div id="calendar-container"></div>
+                <div class="brushes">
+                    <div class="brush active" data-status="busy"></div>
+                    <div class="brush" data-status="free"></div>
+                    <div class="brush" data-status="undefined"></div>
+                    <div class="brush clear" data-status="clear"></div>
+                    <button id="template-btn" class="brush template-brush" title="Массовое заполнение"></button>
+                </div>
+            </div>
+
+            <div id="hourly-schedule">
+                <!-- Часы будут генерироваться здесь -->
+            </div>
+
+            <!-- Suggestion Box Button Container -->
+            <div class="fab-container">
+                <button id="suggestion-fab" class="fab" title="Ящик для предложений">&#x1F4EC;</button>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Radial Menu for time selection -->
+    <div id="radial-menu" class="hidden">
+        <div class="radial-segment" data-value="1"></div>
+        <div class="radial-segment" data-value="2"></div>
+        <div class="radial-segment" data-value="3"></div>
+        <div class="radial-segment" data-value="4"></div>
+        <div class="radial-segment" data-value="5"></div>
+        <div class="radial-segment" data-value="6"></div>
+        <div id="radial-menu-center"></div>
+    </div>
+
+    <!-- Template Modal -->
+    <div id="template-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Массовое заполнение</h2>
+            <p class="modal-description">Создайте шаблон ниже и примените его к будним или выходным дням выбранного месяца.</p>
+            
+            <div class="widget-controls template-month-selector">
+                <button id="template-prev-month-btn" class="widget-nav-btn">&lt;</button>
+                <span id="template-month-display"></span>
+                <button id="template-next-month-btn" class="widget-nav-btn">&gt;</button>
+            </div>
+
+            <div id="template-brushes" class="brushes">
+                <div class="brush active" data-status="busy"></div>
+                <div class="brush" data-status="free"></div>
+                <div class="brush" data-status="undefined"></div>
+                <div class="brush clear" data-status="clear"></div>
+            </div>
+
+            <div id="template-schedule">
+                <!-- Часы для шаблона будут генерироваться здесь -->
+            </div>
+
+            <div class="template-actions">
+                <div class="template-range-actions">
+                    <input type="date" id="template-from-date" class="form-group-input">
+                    <span>-</span>
+                    <input type="date" id="template-to-date" class="form-group-input">
+                    <button id="apply-range-btn" class="button">Применить</button>
+                </div>
+                <div class="template-weekdays-actions">
+                    <button id="apply-monday-btn" class="button weekday-btn">Пн</button>
+                    <button id="apply-tuesday-btn" class="button weekday-btn">Вт</button>
+                    <button id="apply-wednesday-btn" class="button weekday-btn">Ср</button>
+                    <button id="apply-thursday-btn" class="button weekday-btn">Чт</button>
+                    <button id="apply-friday-btn" class="button weekday-btn">Пт</button>
+                    <button id="apply-saturday-btn" class="button weekday-btn">Сб</button>
+                    <button id="apply-sunday-btn" class="button weekday-btn">Вс</button>
+                </div>
+                <div class="template-apply-group">
+                    <button id="apply-weekdays-btn" class="button">Применить к будням</button>
+                    <button id="apply-weekends-btn" class="button">Применить к выходным</button>
+                    <button id="apply-all-days-btn" class="button">Применить на все дни</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-help-modal-btn">&times;</span>
+            <h2>Инструкция по использованию</h2>
+            <ul class="help-list">
+                <li>
+                    <strong>Основное взаимодействие:</strong>
+                    <ul>
+                        <li><strong>Закрашивание часа:</strong> Нажмите на ячейку часа, чтобы закрасить ее целиком выбранным цветом (статусом). Повторное нажатие очистит час.</li>
+                        <li><strong>Быстрое закрашивание:</strong> Нажмите и проведите по нескольким часам, чтобы быстро их закрасить.</li>
+                        <li><strong>Точное время (до 10 минут):</strong> Нажмите и удерживайте ячейку часа, чтобы появилось круговое меню. Выберите, сколько 10-минутных интервалов вы хотите отметить.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Выбор статуса (Кисти):</strong>
+                    <p>Цветные кружки вверху страницы позволяют выбрать, каким статусом (цветом) вы будете отмечать время.</p>
+                    <div class="help-color-legend">
+                        <div><span class="brush-legend" style="background-color: var(--status-busy);"></span> - Занят</div>
+                        <div><span class="brush-legend" style="background-color: var(--status-free);"></span> - Свободен</div>
+                        <div><span class="brush-legend" style="background-color: var(--status-uncertain);"></span> - Возможно</div>
+                        <div><span class="brush-legend" style="border: 2px dashed #aeaeae; background: transparent;"></span> - Очистить отметку</div>
+                    </div>
+                </li>
+                <li>
+                    <strong>Массовое заполнение (Шаблоны):</strong>
+                    <p>Кнопка <span class="brush-legend" style="background-color: var(--status-training);"></span> открывает окно для создания и применения шаблонов.</p>
+                    <ul>
+                        <li><strong>Создание шаблона:</strong> Настройте расписание на день в появившемся окне. Шаблон сохранится автоматически.</li>
+                        <li><strong>Применение шаблона:</strong> Вы можете применить созданный шаблон к определенному диапазону дат, ко всем будням, выходным или конкретным дням недели (Пн, Вт и т.д.) в выбранном месяце.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Календарь и навигация:</strong>
+                    <ul>
+                        <li>Календарь подсвечивает дни, которые заполнены не полностью.</li>
+                        <li><strong>PJ:</strong> Кнопка для перехода на страницу ваших проектов.</li>
+                        <li><strong>Ящик для предложений (&#x1F4EC;):</strong> Нажмите, чтобы оставить идею по улучшению или проголосовать за предложения других.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Suggestion Box Modal -->
+    <div id="suggestion-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-suggestion-modal-btn">&times;</span>
+            <h2>Ящик для предложений</h2>
+            <button id="show-add-suggestion-modal-btn" class="button">Добавить предложение</button>
+            <div id="suggestion-list" class="suggestion-list-container">
+                <!-- Suggestions will be loaded here -->
+            </div>
+            <details class="archive-section" style="margin-top: 2rem;">
+                <summary class="archive-summary">Исполненные</summary>
+                <div id="completed-suggestion-list" class="suggestion-list-container">
+                    <!-- Completed suggestions will be loaded here -->
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- Add Suggestion Modal -->
+    <div id="add-suggestion-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-add-suggestion-modal-btn">&times;</span>
+            <h2>Новое предложение</h2>
+            <form id="add-suggestion-form">
+                <input type="text" id="suggestion-title-input" placeholder="Заголовок предложения" required>
+                <textarea id="suggestion-text-input" placeholder="Опишите вашу идею..." required></textarea>
+                <button type="submit">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
