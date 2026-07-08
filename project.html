@@ -16,7 +16,8 @@
         </div>
         <div class="header-actions">
             <button id="project-help-btn" class="header-btn" title="Помощь">?</button>
-            <button type="button" id="back-to-projects-btn" class="header-back-btn">&#8592;</button>
+            <a href="#" id="back-to-participant-project-btn" class="header-btn" title="Сохранить и вернуться к проекту">&#10004;</a>
+            <button type="button" id="back-to-participant-btn" class="header-back-btn" title="Назад к списку проектов">&#8592;</button>
         </div>
     </header>
 
@@ -41,12 +42,12 @@
                 </div>
                 <ul id="training-list" class="training-list"></ul>
             </div>
-            <!-- Блок для партий -->
-            <div id="roles-widget" class="widget">
-                <h2 class="collapsible-header">Партии</h2>
-                <ul id="role-list" class="role-list">
-                    <!-- Роли будут загружаться сюда -->
-                </ul>
+            <!-- Блок для материалов -->
+            <div id="materials-widget" class="widget">
+                <h2 class="collapsible-header">Материалы</h2>
+                <div id="materials-content" class="hidden">
+                    <!-- Сюда будет загружаться контент материалов -->
+                </div>
             </div>
             <div id="participants-widget" class="widget">
                 <h2>Участники</h2>
@@ -140,12 +141,24 @@
                     </div>
                 </li>
                  <li>
-                    <strong>Управление проектом (для администратора и ответственного):</strong>
+                    <strong>Управление проектом:</strong>
+                    <p>Пользователи с ролью <strong>Администратор</strong> или <strong>Ответственный за проект</strong> имеют расширенные права на управление.</p>
                     <ul>
-                        <li><strong>Тренировки:</strong> Добавляйте, редактируйте и удаляйте тренировки для этого проекта.</li>
-                        <li><strong>Партии:</strong> Назначайте роли или музыкальные партии для каждого участника (виджет можно свернуть/развернуть).</li>
-                        <li><strong>Участники:</strong> Добавляйте или удаляйте участников из проекта (виджет можно свернуть/развернуть).</li>
-                        <li><strong>Ответственный:</strong> Назначьте одного из участников ответственным за проект. Ответственный сможет видеть эту страницу и управлять тренировками.</li>
+                        <li><strong>Тренировки:</strong> Добавляйте, редактируйте и удаляйте тренировки для этого проекта. Указывайте время, место и комментарии.</li>
+                        <li>
+                            <strong>Материалы:</strong> Этот виджет (можно свернуть/развернуть) предназначен для ведения учета по партиям, костюмам и задачам для каждого участника. Управлять материалами могут администратор и ответственный.
+                            <ul>
+                                <li><strong>Партия:</strong> Добавление музыкальной или сценической партии с описанием и фотографиями.</li>
+                                <li><strong>Костюм:</strong> Учет элементов костюма с названием, ссылкой на товар и фотографиями.</li>
+                                <li><strong>Задача:</strong> Постановка индивидуальных задач с описанием и возможностью отмечать их выполнение.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Управление для администратора:</strong>
+                            <ul>
+                                <li><strong>Участники:</strong> Добавляйте или удаляйте участников из проекта (виджет можно свернуть/развернуть). При удалении участника все связанные с ним материалы также будут удалены.</li>
+                                <li><strong>Ответственный:</strong> Назначьте одного из участников ответственным за проект. Ответственный получает права на управление тренировками и материалами.</li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -156,6 +169,26 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="project.js"></script>
+
+    <!-- Image Viewer Modal -->
+    <div id="image-viewer-modal" class="modal">
+        <span class="close-btn" id="close-image-viewer-btn">&times;</span>
+        <img class="modal-content" id="image-viewer-content">
+        <button id="image-viewer-delete-btn" class="delete-photo-modal-btn" title="Удалить фото">🗑️</button>
+    </div>
+
+    <!-- Add Material Modal -->
+    <div id="add-material-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Добавить материал</h2>
+            <div id="material-type-selection">
+                <button data-type="party">Партия</button>
+                <button data-type="costume">Костюм</button>
+                <button data-type="task">Задача</button>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

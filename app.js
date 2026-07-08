@@ -3,18 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loggedInUser = sessionStorage.getItem('loggedInUser');
     const isAdmin = sessionStorage.getItem('isAdmin');
     const usernameDisplay = document.getElementById('username-display');
-    const adminPanelLink = document.getElementById('admin-panel-link');
-
-    if (!loggedInUser) {
-        window.location.href = 'login.html';
-        return; // Stop script execution
-    }
-    usernameDisplay.textContent = `Пользователь: ${loggedInUser}`;
-
-    if (isAdmin === 'true') {
-        adminPanelLink.classList.remove('hidden');
-    }
-
     // --- FIREBASE SETUP ---
     const firebaseConfig = {
         apiKey: "AIzaSyD2AgCF39T8Zk_kDRF6M9IHiMRz6stp_HA",

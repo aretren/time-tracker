@@ -518,7 +518,7 @@ button:active {
     /* Добавляем padding и отрицательный margin для пространства под свечение */
     padding: 1.5rem 1.5rem 2.5rem 1.5rem; /* Увеличиваем нижний padding */
     margin-bottom: 1.5rem;
-    max-height: 1000px; /* Устанавливаем большой max-height для конечного состояния */
+    max-height: 10000px; /* Устанавливаем большой max-height для конечного состояния */
     position: relative; /* Необходимо для дочерних элементов */
     overflow: visible; /* Позволяет box-shadow выходить за пределы */
 }
@@ -531,6 +531,34 @@ button:active {
 }
 
 /* --- Project Page Specific Layout --- */
+.project-card {
+    background: var(--glass-bg); /* Use glass background */
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-color);
+    border-radius: 16px; /* Match widget border-radius */
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+    box-shadow: var(--glow-shadow); /* Add glow shadow */
+    animation: block-appear 0.5s ease-out forwards; /* Add block-appear animation */
+}
+
+
+.project-card {
+    background: var(--glass-bg); /* Use glass background */
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-color);
+    border-radius: 16px; /* Match widget border-radius */
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+    box-shadow: var(--glow-shadow); /* Add glow shadow */
+    animation: block-appear 0.5s ease-out forwards; /* Add block-appear animation */
+}
 .project-page-layout {
     display: flex;
     flex-direction: column;
@@ -688,6 +716,16 @@ button:active {
     font-weight: bold;
     font-size: 1.5rem;
     line-height: 1;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#add-training-btn {
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 .widget.collapsed h2.collapsible-header::after {
@@ -1152,6 +1190,107 @@ button:active {
     }
 }
 
+
+/* --- Materials Widget --- */
+#materials-content {
+    padding-top: 1rem;
+}
+
+.material-user-container {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.material-user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.material-user-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.add-material-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0;
+}
+
+.material-items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.material-item {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.material-item h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.material-item p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.photo-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.photo-thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.photo-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.delete-photo-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.task-item {
+}
+
+.task-item.completed {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
 /* Incomplete Days Widget */
 #incomplete-days-widget {
     margin-top: 1.5rem;
@@ -1476,3 +1615,271 @@ button:active {
     min-height: 120px;
     resize: vertical;
 }
+
+/* --- Materials Widget Additions --- */
+.material-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.material-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.material-item-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    width: auto; /* Override default button width */
+}
+
+.edit-material-btn {
+    color: var(--dark-text);
+}
+
+.edit-material-btn:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.delete-material-btn {
+    color: var(--status-busy);
+}
+
+.delete-material-btn:hover {
+    background-color: rgba(255, 138, 128, 0.2);
+}
+
+.photo-thumbnail {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.photo-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.photo-thumbnail .delete-photo-btn {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.photo-thumbnail:hover .delete-photo-btn {
+    opacity: 1;
+}
+
+.add-photo-btn {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    width: auto;
+    align-self: flex-start;
+}
+
+.material-item.add-form button, .material-item .add-form button {
+    width: auto;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+}
+
+
+#material-type-selection {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;
+}
+
+#material-type-selection button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: auto;
+}
+
+/* --- Image Viewer Modal --- */
+#image-viewer-modal .modal-content {
+    background: none;
+    box-shadow: none;
+    width: auto;
+    max-width: 90vw;
+    max-height: 90vh;
+    padding: 0;
+}
+
+#image-viewer-modal .close-btn {
+    color: white;
+    font-size: 40px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+#image-viewer-content {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+}
+
+.delete-photo-modal-btn {
+    position: fixed; /* Changed to fixed */
+    bottom: 2rem; /* Changed from top */
+    right: 2rem; /* Changed value */
+    background: var(--status-busy);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px; /* Increased size for better touch access */
+    height: 50px; /* Increased size */
+    font-size: 1.5rem; /* Increased icon size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Enhanced shadow */
+    z-index: 1002; /* Ensure it's above modal content and close button */
+}
+
+.delete-photo-modal-btn:hover {
+    background: #ff5252; /* Brighter red on hover */
+    transform: scale(1.1);
+}
+
+.delete-photo-modal-btn.hidden {
+    display: none;
+}
+
+/* Context Menu for Participant Project Page */
+.context-menu {
+    position: absolute;
+    z-index: 1001;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--glow-shadow);
+    padding: 0.5rem;
+    min-width: 150px;
+}
+
+.context-menu-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.context-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- New Material Styles (Icons & Links) --- */
+
+.material-link-container {
+    margin: 0.5rem 0;
+}
+
+.material-link-container a {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--dark-text);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.material-link-container a:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.material-item-actions button {
+    font-size: 1.2rem; /* Make icons larger */
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%; /* Make all action buttons circular */
+}
+
+.toggle-task-status-btn {
+    font-size: 1.5rem; /* Make status icon larger */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.toggle-task-status-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.material-item-actions .toggle-task-status-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 1.2rem;
+}
+
+/* --- Participant Page Project/Training List --- */
+#projects-container .project-card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem; /* Increased space between cards */
+    background: rgba(255, 255, 255, 0.65); /* Slightly more opaque */
+    cursor: pointer; /* Ensure cursor indicates it's clickable */
+}
+
+#projects-container .project-card h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.training-list-participant {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.training-list-participant li {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0;
+    font-size: 0.95rem;
+    color: var(--dark-text);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.training-list-participant li:last-child {
+    border-bottom: none; /* Remove border from the last item */
+}
+
+.training-marker {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--status-training); /* Use the blue training color */
+    margin-right: 1rem; /* Space between marker and text */
+    flex-shrink: 0; /* Prevent marker from shrinking */
+    box-shadow: 0 0 8px 1px var(--status-training); /* Add a subtle glow */
+}
+
+

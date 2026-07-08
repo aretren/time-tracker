@@ -38,7 +38,7 @@ loginForm.addEventListener('submit', (e) => {
                     window.location.href = 'admin.html';
                 } else {
                     sessionStorage.removeItem('isAdmin'); // Ensure isAdmin is not set for regular users
-                    window.location.href = 'app.html';
+                    window.location.href = 'participant.html';
                 }
             } else {
                 errorMessage.textContent = 'Неверный пароль.';

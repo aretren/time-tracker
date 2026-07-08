@@ -14,6 +14,7 @@
                 <h1 id="project-name-header">Загрузка...</h1>
                 <span id="username-display"></span>
             </div>
+            <a href="#" id="edit-project-btn" class="header-btn hidden" title="Редактировать проект">&#9998;</a>
             <a href="participant.html" class="header-back-btn" title="К моим проектам">&#8592;</a>
         </header>
 
@@ -29,9 +30,12 @@
                 </div>
             </div>
             <div class="management-column">
-                <div class="widget">
-                    <h2>Участники и партии</h2>
-                    <ul id="participant-roles-list" class="role-list"></ul>
+                <!-- Блок для материалов -->
+                <div id="materials-widget" class="widget">
+                    <h2 class="collapsible-header">Мои материалы</h2>
+                    <div id="materials-content">
+                        <!-- Сюда будет загружаться контент материалов -->
+                    </div>
                 </div>
             </div>
         </main>
@@ -41,5 +45,25 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="participant_project.js"></script>
-</body>
-</html>
+
+    <!-- Image Viewer Modal -->
+    <div id="image-viewer-modal" class="modal">
+        <span class="close-btn" id="close-image-viewer-btn">&times;</span>
+        <img class="modal-content" id="image-viewer-content">
+        <button id="image-viewer-delete-btn" class="delete-photo-modal-btn" title="Удалить фото">🗑️</button>
+    </div>
+
+    <!-- Add Material Modal -->
+    <div id="add-material-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Добавить материал</h2>
+            <div id="material-type-selection">
+                <button data-type="party">Партия</button>
+                <button data-type="costume">Костюм</button>
+                <button data-type="task">Задача</button>
+            </div>
+        </div>
+    </div>
+    </body>
+    </html>
