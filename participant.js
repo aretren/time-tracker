@@ -390,6 +390,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetchUsersForModal();
             }
 
+            // --- ARCHIVED PROJECTS LOGIC ---
+            if (isAdmin) {
+                const archivedProjectsSection = document.getElementById('archived-projects-section');
+                const archivedProjectsList = document.getElementById('archived-projects-list');
+                const archivedProjects = Object.entries(allProjects).filter(([_, p]) => p.isArchived);
+
+                if (archivedProjects.length > 0) {
+                    archivedProjectsSection.classList.remove('hidden');
+                    archivedProjectsList.innerHTML = '';
+
+                    const header = archivedProjectsSection.querySelector('h2');
+                    if (header && !header.classList.contains('collapsible-header-initialized')) {
+                        header.classList.add('collapsible-header-initialized');
+                        archivedProjectsSection.classList.add('collapsed'); // Collapse by default
+                        header.addEventListener('click', () => {
+                            archivedProjectsSection.classList.toggle('collapsed');
+                        });
+                    }
+
+                    archivedProjects.forEach(([projectId, projectData]) => {
+                        const projectElement = document.createElement('div');
+                        projectElement.className = 'project';
+                        projectElement.style.cursor = 'pointer';
+                        projectElement.innerHTML = `
+                            <div class="project-info" style="opacity: 0.7;">
+                                <span>${projectData.name}</span>
+                            </div>
+                        `;
+
+                        projectElement.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            window.location.href = `participant_project.html?id=${projectId}`;
+                        });
+
+                        archivedProjectsList.appendChild(projectElement);
+                    });
+                } else {
+                    archivedProjectsSection.classList.add('hidden');
+                }
+            }
+
             initializeCalendar();
         });
     };

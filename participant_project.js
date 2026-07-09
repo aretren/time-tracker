@@ -243,6 +243,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    window.addEventListener('touchend', (e) => {
+        if (e.target === imageViewerModal) {
+            imageViewerModal.classList.remove('visible');
+        }
+        if (e.target === addMaterialModal) {
+            addMaterialModal.classList.remove('visible');
+        }
+    });
+
     // --- MATERIAL DATA RENDERING ---
     const renderMaterials = (members, materials = {}) => {
         if (!materialsWidget) return;

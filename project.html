@@ -59,6 +59,15 @@
                     <select id="responsible-user-select" class="form-group"></select>
                 </div>
             </div>
+            <div id="project-actions-widget" class="widget hidden">
+                <h2>Действия с проектом</h2>
+                <div class="form-group">
+                     <button id="archive-project-btn" class="button">Архивировать</button>
+                </div>
+                <div class="form-group">
+                    <button id="delete-project-btn" class="button" style="background-color: var(--status-busy);">Удалить проект</button>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -129,14 +138,6 @@
                         <div>
                             <span class="brush-legend" style="background-color: var(--status-training);"></span>
                             <p><strong>Тренировка</strong> - На этот час у участника назначена тренировка в каком-либо проекте.</p>
-                        </div>
-                        <div>
-                            <span class="brush-legend" style="background-color: var(--conflict-busy-training);"></span>
-                            <p><strong>Конфликт (Занят)</strong> - Тренировка пересекается с часом, когда участник отметил, что он занят.</p>
-                        </div>
-                        <div>
-                            <span class="brush-legend" style="background-color: var(--conflict-undefined-training);"></span>
-                            <p><strong>Конфликт (Не уверен)</strong> - Тренировка пересекается с часом, где участник не определился со статусом.</p>
                         </div>
                     </div>
                 </li>

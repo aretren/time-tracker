@@ -64,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const addMaterialModal = document.getElementById('add-material-modal');
     const closeAddMaterialModalBtn = addMaterialModal.querySelector('.close-btn');
     const materialTypeSelection = document.getElementById('material-type-selection');
+    const projectActionsWidget = document.getElementById('project-actions-widget');
+    const archiveProjectBtn = document.getElementById('archive-project-btn');
+    const deleteProjectBtn = document.getElementById('delete-project-btn');
 
     // --- STATE ---
     let selectedDate = new Date();
@@ -77,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isHighlighting = false;
     let canEditMaterials = false; // Permission flag
     let highlightsCache = {};
+    let actionButtonsInitialized = false;
 
     // --- INITIALIZATION ---
     initializeCalendar();
@@ -574,8 +578,39 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (isCurrentUserAdmin) {
                 usernameDisplay.textContent = `Администратор: ${loggedInUser}`;
+
+                // --- PROJECT ACTIONS (DELETE/ARCHIVE) ---
+                projectActionsWidget.classList.remove('hidden');
+
+                // Set button text based on archive status
+                archiveProjectBtn.textContent = projectData.isArchived ? 'Разархивировать проект' : 'Архивировать проект';
+                archiveProjectBtn.style.backgroundColor = projectData.isArchived ? 'var(--status-free)' : 'var(--status-uncertain)';
+                
+                if (!actionButtonsInitialized) {
+                    archiveProjectBtn.addEventListener('click', () => {
+                        const newStatus = !projectData.isArchived;
+                        const actionText = newStatus ? 'архивировать' : 'разархивировать';
+                        if (confirm(`Вы уверены, что хотите ${actionText} проект "${projectData.name}"?`)) {
+                            projectRef.child('isArchived').set(newStatus);
+                        }
+                    });
+
+                    deleteProjectBtn.addEventListener('click', () => {
+                        if (confirm(`ВНИМАНИЕ! Вы уверены, что хотите ПОЛНОСТЬЮ удалить проект "${projectData.name}"? Это действие необратимо.`)) {
+                            projectRef.remove().then(() => {
+                                alert('Проект удален.');
+                                window.location.href = 'participant.html';
+                            }).catch(err => {
+                                alert('Ошибка при удалении проекта: ' + err.message);
+                            });
+                        }
+                    });
+                    actionButtonsInitialized = true;
+                }
+
             } else if (isProjectResponsible) {
                 usernameDisplay.textContent = `Ответственный: ${loggedInUser}`;
+                projectActionsWidget.classList.add('hidden');
             }
 
             // Render all components
