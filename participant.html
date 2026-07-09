@@ -59,11 +59,35 @@
                 </form>
             </div>
         </div>
+
+        <!-- Create Project Modal -->
+        <div id="create-project-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Создать новый проект</h2>
+                <form id="create-project-form">
+                    <div class="form-group">
+                        <label for="project-name">Название проекта</label>
+                        <input type="text" id="project-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Участники</label>
+                        <div id="user-list-checkboxes" class="user-checkbox-list">
+                            <!-- User checkboxes will be injected here -->
+                        </div>
+                    </div>
+                    <button type="submit">Создать проект</button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <div id="color-picker-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://unpkg.com/@jaames/iro@5.5.0/dist/iro.min.js"></script>
     <script src="participant.js"></script>
 </body>
 </html>

@@ -477,13 +477,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         currentProject = allProjects[projectId];
-        if (!currentProject.members || !currentProject.members[loggedInUser]) {
+        
+        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+
+        // --- ACCESS CONTROL ---
+        const isMember = currentProject.members && currentProject.members[loggedInUser];
+        if (!isAdmin && !isMember) {
             alert('У вас нет доступа к этому проекту.');
             window.location.href = 'participant.html';
             return;
         }
 
-        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+
         const isResponsible = currentProject.responsible === loggedInUser;
 
         if (isAdmin || isResponsible) {
