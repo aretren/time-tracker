@@ -710,7 +710,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
                 if(canManage) {
-                    
+                    const actionsContainer = li.querySelector('.training-actions');
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'edit-training-btn';
+                    editBtn.innerHTML = '✏️';
+                    editBtn.title = 'Редактировать';
+                    editBtn.onclick = (event) => editTraining(id, training, li, event);
+                    actionsContainer.appendChild(editBtn);
                 }
                 trainingListEl.appendChild(li);
             });
