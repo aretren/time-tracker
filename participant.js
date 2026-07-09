@@ -46,10 +46,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const backdrop = document.createElement('div');
         backdrop.className = 'color-picker-backdrop';
         
+        const wrapper = document.createElement('div');
+        wrapper.className = 'color-picker-wrapper';
+
         const wheelContainer = document.createElement('div');
         wheelContainer.className = 'color-picker-wheel';
 
-        colorPickerContainer.append(backdrop, wheelContainer);
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'Сбросить';
+        resetButton.className = 'color-picker-reset-btn';
+
+        wrapper.append(wheelContainer, resetButton);
+        colorPickerContainer.append(backdrop, wrapper);
 
         colorPicker = new iro.ColorPicker(wheelContainer, {
             width: 250,
@@ -68,6 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
         colorPicker.on('color:change', (color) => {
             const hue = color.hue;
             database.ref(`projects/${projectId}/colorHue`).set(hue);
+        });
+
+        resetButton.addEventListener('click', () => {
+            database.ref(`projects/${projectId}/colorHue`).remove();
+            hidePicker();
         });
 
         backdrop.addEventListener('click', hidePicker);

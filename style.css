@@ -1062,17 +1062,27 @@ button:active {
     overflow-y: auto;
 }
 .close-btn {
-    color: #9e9e9e;
     position: absolute;
-    top: 15px;
-    right: 25px;
+    top: 1.5rem; /* Standardized spacing */
+    right: 1.5rem; /* Standardized spacing */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
     font-size: 32px;
     font-weight: bold;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1003;
+    text-shadow: none;
 }
 .close-btn:hover {
-    color: var(--dark-text);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
 }
 .user-checkbox-list {
     max-height: 250px;
@@ -1736,39 +1746,61 @@ button:active {
 }
 
 #image-viewer-modal .close-btn {
+    position: absolute;
+    top: 1.5rem; /* Standardized spacing */
+    right: 1.5rem; /* Standardized spacing */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
-    font-size: 40px;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    font-size: 32px;
+    font-weight: bold;
+    text-shadow: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Removed line-height as flexbox handles vertical centering */
+    padding-top: 3px; /* Small adjustment for visual centering of 'x' */
+    z-index: 1002;
+    transition: background-color 0.2s;
+}
+
+#image-viewer-modal .close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 #image-viewer-content {
     max-width: 100%;
     max-height: 100%;
     border-radius: 8px;
+    position: relative; /* Ensure image creates a stacking context */
+    z-index: 1; /* Ensure image is below close button */
 }
 
 .delete-photo-modal-btn {
-    position: fixed; /* Changed to fixed */
-    bottom: 2rem; /* Changed from top */
-    right: 2rem; /* Changed value */
-    background: var(--status-busy);
-    color: white;
-    border: none;
+    position: fixed;
+    bottom: 1.5rem; /* Standardized spacing */
+    right: 1.5rem; /* Standardized spacing */
+    background: rgba(255, 255, 255, 0.4);
+    color: var(--dark-text);
+    border: 1px solid var(--border-color);
     border-radius: 50%;
-    width: 50px; /* Increased size for better touch access */
-    height: 50px; /* Increased size */
-    font-size: 1.5rem; /* Increased icon size */
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Enhanced shadow */
-    z-index: 1002; /* Ensure it's above modal content and close button */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1002;
 }
 
 .delete-photo-modal-btn:hover {
-    background: #ff5252; /* Brighter red on hover */
+    background: rgba(255, 255, 255, 0.7); /* Lighter on hover */
     transform: scale(1.1);
 }
 
@@ -1969,6 +2001,38 @@ button:active {
 .color-picker-wheel {
     position: relative;
     z-index: 2;
+}
+
+.color-picker-wrapper {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--glow-shadow);
+}
+
+.color-picker-reset-btn {
+    width: auto;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    background-color: rgba(255, 255, 255, 0.4);
+    color: var(--dark-text);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.color-picker-reset-btn:hover {
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 /* --- Participant Management Context Menu --- */
