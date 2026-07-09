@@ -71,10 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (materialsWidget) {
         const header = materialsWidget.querySelector('h2');
+        const content = document.getElementById('materials-content');
         if (header) {
             header.classList.add('collapsible-header');
+            materialsWidget.classList.add('collapsed'); // Collapse by default
+            content.classList.add('hidden'); // Hide content by default
             header.addEventListener('click', () => {
                 materialsWidget.classList.toggle('collapsed');
+                content.classList.toggle('hidden');
             });
         }
         

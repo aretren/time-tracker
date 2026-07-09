@@ -156,6 +156,190 @@ document.addEventListener('DOMContentLoaded', () => {
         createProjectForm.addEventListener('submit', createProject);
     }
 
+    // --- MANAGE PARTICIPANTS MODAL ---
+    const manageParticipantsModal = document.getElementById('manage-participants-modal');
+    const manageParticipantsBtn = document.getElementById('manage-participants-btn');
+    const closeManageParticipantsModalBtn = manageParticipantsModal.querySelector('.close-btn');
+    const createParticipantForm = document.getElementById('create-participant-form');
+    const newParticipantLoginInput = document.getElementById('new-participant-login');
+    const newParticipantPasswordInput = document.getElementById('new-participant-password');
+    const participantListEl = document.getElementById('participant-list');
+
+    const showManageParticipantsModal = () => {
+        manageParticipantsModal.classList.add('visible');
+        fetchParticipants();
+    };
+    const hideManageParticipantsModal = () => manageParticipantsModal.classList.remove('visible');
+
+    // Close any open context menus
+    const closeContextMenu = () => {
+        const existingMenu = document.querySelector('.participant-context-menu');
+        if (existingMenu) {
+            existingMenu.remove();
+        }
+    };
+
+    // Global listener to close context menu
+    window.addEventListener('click', (e) => {
+        if (!e.target.closest('.participant-context-menu') && !e.target.matches('.context-menu-btn')) {
+            closeContextMenu();
+        }
+        if (e.target === manageParticipantsModal) {
+            hideManageParticipantsModal();
+        }
+    });
+     window.addEventListener('scroll', closeContextMenu, true); // Close on scroll
+
+
+    if (manageParticipantsBtn) {
+        manageParticipantsBtn.addEventListener('click', showManageParticipantsModal);
+    }
+    if (closeManageParticipantsModalBtn) {
+        closeManageParticipantsModalBtn.addEventListener('click', hideManageParticipantsModal);
+    }
+
+    const showContextMenu = (username, userData, buttonEl) => {
+        closeContextMenu(); // Close any old menus
+
+        const menu = document.createElement('div');
+        menu.className = 'participant-context-menu';
+
+        const rect = buttonEl.getBoundingClientRect();
+
+        // Create menu items
+        const actions = [
+            { label: 'Сменить пароль', action: () => changeParticipantPassword(username), disabled: false },
+            { label: userData.isAdmin ? 'Снять админа' : 'Назначить админом', action: () => toggleAdminStatus(username, userData.isAdmin), disabled: username === 'Leroy' },
+            { label: 'Удалить', action: () => deleteParticipant(username), disabled: username === 'Leroy', isDelete: true }
+        ];
+
+        actions.forEach(({ label, action, disabled, isDelete }) => {
+            const item = document.createElement('div');
+            item.className = 'context-menu-item';
+            if (isDelete) item.classList.add('delete');
+            item.textContent = label;
+
+            if (disabled) {
+                item.classList.add('disabled');
+            } else {
+                item.addEventListener('click', () => {
+                    action();
+                    closeContextMenu();
+                });
+            }
+            menu.appendChild(item);
+        });
+
+        document.body.appendChild(menu);
+
+        // Position the menu
+        const menuRect = menu.getBoundingClientRect();
+        let top = rect.bottom + window.scrollY;
+        let left = rect.right - menuRect.width + window.scrollX;
+
+        // Adjust if it goes off-screen
+        if (left < 0) {
+            left = rect.left + window.scrollX;
+        }
+        if (top + menuRect.height > window.innerHeight + window.scrollY) {
+            top = rect.top - menuRect.height + window.scrollY;
+        }
+
+        menu.style.top = `${top}px`;
+        menu.style.left = `${left}px`;
+    };
+
+
+    const fetchParticipants = () => {
+        const usersRef = database.ref('users');
+        // Use 'once' to avoid issues with open context menus when data changes
+        usersRef.once('value', (snapshot) => {
+            const users = snapshot.val();
+            participantListEl.innerHTML = '';
+            if (users) {
+                Object.entries(users).forEach(([username, userData]) => {
+                    const userItem = document.createElement('div');
+                    userItem.className = 'participant-item';
+
+                    const userInfo = document.createElement('div');
+                    userInfo.className = 'participant-info';
+                    userInfo.textContent = `${username} ${userData.isAdmin ? '(Admin)' : ''}`;
+
+                    const userControls = document.createElement('div');
+                    userControls.className = 'participant-controls';
+
+                    const contextMenuBtn = document.createElement('button');
+                    contextMenuBtn.className = 'context-menu-btn';
+                    contextMenuBtn.innerHTML = '&#8943;'; // Vertical ellipsis
+                    contextMenuBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showContextMenu(username, userData, contextMenuBtn);
+                    });
+
+                    userControls.appendChild(contextMenuBtn);
+                    userItem.append(userInfo, userControls);
+                    participantListEl.appendChild(userItem);
+                });
+            }
+        });
+    };
+
+    const createParticipant = (e) => {
+        e.preventDefault();
+        const login = newParticipantLoginInput.value.trim();
+        const password = newParticipantPasswordInput.value.trim();
+
+        if (!login || !password) {
+            alert('Пожалуйста, введите логин и пароль.');
+            return;
+        }
+
+        database.ref(`users/${login}`).set({
+            password: password,
+            isAdmin: false
+        }).then(() => {
+            createParticipantForm.reset();
+            fetchParticipants(); // Manually refresh list
+        }).catch(error => {
+            alert('Не удалось создать участника: ' + error.message);
+        });
+    };
+
+    const deleteParticipant = (username) => {
+        if (confirm(`Вы уверены, что хотите удалить участника ${username}?`)) {
+            database.ref(`users/${username}`).remove()
+                .then(() => fetchParticipants()) // Manually refresh list
+                .catch(error => alert('Не удалось удалить участника: ' + error.message));
+        }
+    };
+
+    const changeParticipantPassword = (username) => {
+        const newPassword = prompt(`Введите новый пароль для ${username}:`);
+        if (newPassword && newPassword.trim() !== '') {
+            database.ref(`users/${username}/password`).set(newPassword)
+                .then(() => {
+                    alert(`Пароль для ${username} успешно изменен.`);
+                    fetchParticipants(); // Refresh might be good for visual feedback if we add it
+                })
+                .catch(error => alert('Не удалось сменить пароль: ' + error.message));
+        }
+    };
+
+    const toggleAdminStatus = (username, isAdmin) => {
+        if (username === 'Leroy') {
+            alert('Статус администратора для Leroy изменить нельзя.');
+            return;
+        }
+        database.ref(`users/${username}/isAdmin`).set(!isAdmin)
+            .then(() => fetchParticipants()) // Manually refresh list
+            .catch(error => alert('Не удалось изменить статус администратора: ' + error.message));
+    };
+
+    if (createParticipantForm) {
+        createParticipantForm.addEventListener('submit', createParticipant);
+    }
+
+
 
     // --- CALENDAR SETUP ---
     let calendar;
@@ -221,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let projectsToDisplay = [];
 
             if (isAdmin) {
+                manageParticipantsBtn.classList.remove('hidden');
                 const allProjectEntries = Object.entries(allProjects).filter(([_, p]) => !p.isArchived);
 
                 const memberProjects = allProjectEntries.filter(([_, p]) => p.members && p.members[loggedInUser]);

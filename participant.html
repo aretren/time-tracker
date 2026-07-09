@@ -14,6 +14,7 @@
                 <h1>Мои проекты и тренировки</h1>
                 <span id="username-display"></span>
             </div>
+            <button id="manage-participants-btn" class="header-btn hidden" title="Управление участниками">👥</button>
             <a href="app.html" class="header-back-btn" title="Перейти к трекеру">⏱️</a>
         </header>
 
@@ -84,6 +85,40 @@
                     </div>
                     <button type="submit">Создать проект</button>
                 </form>
+            </div>
+        </div>
+        
+        <!-- Manage Participants Modal -->
+        <div id="manage-participants-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Управление участниками</h2>
+                
+                <div class="participants-management-container">
+                    <!-- Create User Form -->
+                    <div class="create-user-form widget">
+                        <h3>Создать нового участника</h3>
+                        <form id="create-participant-form">
+                            <div class="form-group">
+                                <label for="new-participant-login">Логин</label>
+                                <input type="text" id="new-participant-login" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-participant-password">Пароль</label>
+                                <input type="password" id="new-participant-password" required>
+                            </div>
+                            <button type="submit">Создать</button>
+                        </form>
+                    </div>
+
+                    <!-- User List -->
+                    <div class="user-list-container widget">
+                        <h3>Список участников</h3>
+                        <div id="participant-list">
+                            <!-- Participant items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

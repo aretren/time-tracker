@@ -32,14 +32,14 @@ loginForm.addEventListener('submit', (e) => {
                 // Store user session
                 sessionStorage.setItem('loggedInUser', login);
                 
-                // Check if user is an admin and redirect accordingly
+                // Set admin flag but redirect all users to the participant page
                 if (userData.isAdmin) {
                     sessionStorage.setItem('isAdmin', 'true');
-                    window.location.href = 'admin.html';
                 } else {
                     sessionStorage.removeItem('isAdmin'); // Ensure isAdmin is not set for regular users
-                    window.location.href = 'participant.html';
                 }
+                window.location.href = 'participant.html';
+
             } else {
                 errorMessage.textContent = 'Неверный пароль.';
                 errorMessage.classList.remove('hidden');
