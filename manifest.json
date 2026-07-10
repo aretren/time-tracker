@@ -3,13 +3,13 @@
   "name": "Time Tracker",
   "icons": [
     {
-      "src": "time-tracker.png",
-      "type": "image/png",
+      "src": "favicon.ico",
+      "type": "image/x-icon",
       "sizes": "192x192"
     },
     {
-      "src": "time-tracker.png",
-      "type": "image/png",
+      "src": "favicon.ico",
+      "type": "image/x-icon",
       "sizes": "512x512"
     }
   ],
