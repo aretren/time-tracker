@@ -32,7 +32,10 @@
             <div class="management-column">
                 <!-- Блок для материалов -->
                 <div id="materials-widget" class="widget">
-                    <h2 class="collapsible-header">Материалы</h2>
+                    <div class="widget-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2 class="collapsible-header">Материалы</h2>
+                        <button id="show-add-material-modal-btn" class="header-action-btn" title="Добавить материал" style="width: auto; font-size: 1.5rem;">+</button>
+                    </div>
                     <div id="materials-content">
                         <!-- Сюда будет загружаться контент материалов -->
                     </div>
@@ -58,11 +61,28 @@
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <h2>Добавить материал</h2>
-            <div id="material-type-selection">
-                <button data-type="party">Партия</button>
-                <button data-type="costume">Костюм</button>
-                <button data-type="task">Задача</button>
-            </div>
+            <form id="add-material-form" class="add-form">
+                <div class="form-group" id="material-participant-group">
+                    <label for="material-participant-select">Назначить участнику</label>
+                    <select id="material-participant-select">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="material-type-select">Тип материала</label>
+                    <select id="material-type-select">
+                        <option value="">-- Выберите тип --</option>
+                        <option value="party">Партия</option>
+                        <option value="costume">Костюм</option>
+                        <option value="task">Задача</option>
+                        <option value="note">Заметка</option>
+                    </select>
+                </div>
+                <div id="material-dynamic-form-content">
+                    <!-- Dynamic form fields will be injected here -->
+                </div>
+                <button type="submit">Сохранить</button>
+            </form>
         </div>
     </div>
     </body>

@@ -714,17 +714,20 @@ button:active {
     cursor: pointer;
     position: relative;
     user-select: none; /* Prevent text selection on click */
+    min-height: 1.5rem; /* Ensure minimum height, matching font-size of arrow */
+    flex-shrink: 0; /* Prevent from shrinking in flex container */
+    display: flex;
+    align-items: center;
 }
 
-.widget h2.collapsible-header::after {
-    content: '−'; /* Minus sign for expanded */
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    font-weight: bold;
+.widget h2.collapsible-header::before {
+    content: '▾';
     font-size: 1.5rem;
     line-height: 1;
+    transition: transform 0.3s ease;
+    margin-right: 0.75rem; /* Space between arrow and text */
+    display: inline-block;
+    transform-origin: center;
 }
 
 /* Add spacing to simple widget headers */
@@ -744,11 +747,11 @@ button:active {
     background-color: rgba(255, 255, 255, 0.5);
 }
 
-.widget.collapsed h2.collapsible-header::after {
-    content: '+'; /* Plus sign for collapsed */
+.widget.collapsed h2.collapsible-header::before {
+    transform: rotate(-90deg);
 }
 
-.widget.collapsed > *:not(h2) {
+.widget.collapsed > *:not(.widget-header):not(h2) {
     max-height: 0;
     padding-top: 0;
     padding-bottom: 0;
@@ -897,7 +900,7 @@ button:active {
 }
 
 .air-datepicker-cell.highlight-project-training {
-    background-color: #a0c4ff !important; /* Blue for this project's trainings */
+    background-color: #a0c4ff; /* Blue for this project's trainings */
     color: var(--dark-text);
 }
 
@@ -910,6 +913,17 @@ button:active {
     background-color: #ffd180 !important; /* An amber/orange color */
     color: var(--dark-text);
 }
+
+.air-datepicker-cell.training-day-no-color {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.air-datepicker-cell.past-training {
+    background-color: #d3d3d3 !important; /* Light grey */
+    opacity: 0.6;
+    color: #333;
+}
+
 
 
 /* --- Desktop Layout --- */

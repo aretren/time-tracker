@@ -94,11 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const userHasLiked = suggestion.likes && suggestion.likes[loggedInUser];
 
         let adminButtons = '';
+        let authorDeleteButton = '';
+
         if (isAdmin === 'true') {
             adminButtons = `
                 <button class="suggestion-action-btn complete-suggestion-btn" title="Исполнено">&#x2714;</button>
                 <button class="suggestion-action-btn delete-suggestion-btn" title="Удалить">&#x1F5D1;</button>
             `;
+        } else if (loggedInUser === suggestion.author) {
+            authorDeleteButton = `<button class="suggestion-action-btn delete-suggestion-btn" title="Удалить">&#x1F5D1;</button>`;
         }
 
         suggestionItem.innerHTML = `
@@ -112,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                     <span class="like-count">${likesCount}</span>
                     ${adminButtons}
+                    ${authorDeleteButton}
                 </div>
             </div>
         `;

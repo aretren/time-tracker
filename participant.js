@@ -356,8 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CALENDAR SETUP ---
     let calendar;
-    const projectTrainingDates = new Set();
-    const otherTrainingDates = new Set();
+    const trainingDates = {};
 
     const toLocalDateString = (date) => {
         const y = date.getFullYear();
@@ -366,16 +365,56 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${y}-${m}-${d}`;
     };
 
+    const updateProjectColorStyles = (trainingDates) => {
+        const styleId = 'project-color-styles';
+        let styleElement = document.getElementById(styleId);
+        if (!styleElement) {
+            styleElement = document.createElement('style');
+            styleElement.id = styleId;
+            document.head.appendChild(styleElement);
+        }
+
+        const hues = new Set(Object.values(trainingDates).filter(h => h));
+        let css = '';
+        hues.forEach(hue => {
+            css += `.air-datepicker-cell.training-day-hue-${hue} { background-color: hsla(${hue}, 80%, 85%, 0.9); }\n`;
+        });
+        
+        styleElement.innerHTML = css;
+    };
+
     const initializeCalendar = () => {
         if (calendar) calendar.destroy();
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         calendar = new AirDatepicker('#calendar-container', {
             inline: true,
             locale: { days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'], daysShort: ['Вос', 'Пон', 'Вто', 'Сре', 'Чет', 'Пят', 'Суб'], daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'], months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'], monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'], today: 'Сегодня', clear: 'Очистить', dateFormat: 'dd.MM.yyyy', timeFormat: 'HH:mm', firstDay: 1 },
             onRenderCell: ({date, cellType}) => {
                 if (cellType === 'day') {
                     const dateStr = toLocalDateString(date);
-                    if (projectTrainingDates.has(dateStr)) return { classes: 'highlight-project-training' };
-                    if (otherTrainingDates.has(dateStr)) return { classes: 'highlight-other-training' };
+                    if (trainingDates.hasOwnProperty(dateStr)) {
+                        const colorHue = trainingDates[dateStr];
+                        const isPast = date < today;
+                        
+                        let classes = 'training-day';
+
+                        if (colorHue) {
+                            classes += ` training-day-hue-${colorHue}`;
+                        } else {
+                            classes += ' training-day-no-color';
+                        }
+
+                        if (isPast) {
+                            classes += ' past-training';
+                        }
+
+                        return {
+                            classes: classes
+                        };
+                    }
                 }
             },
             onChangeView: () => {
@@ -391,12 +430,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const allProjects = snapshot.val();
             projectsContainerEl.innerHTML = '';
             
-            projectTrainingDates.clear();
-            otherTrainingDates.clear();
+            for (const key in trainingDates) {
+                delete trainingDates[key];
+            }
 
             if (!allProjects) {
                 projectsContainerEl.innerHTML = '<p>Проекты еще не созданы.</p>';
-                initializeCalendar();
+                updateProjectColorStyles(trainingDates);
+            initializeCalendar();
                 return;
             }
 
@@ -407,7 +448,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         const trainingTime = t.startTime || t.time;
                         if (trainingTime) {
                             try {
-                                otherTrainingDates.add(toLocalDateString(new Date(trainingTime)));
+                                const dateStr = toLocalDateString(new Date(trainingTime));
+                                if (!trainingDates[dateStr] || p.colorHue) { 
+                                    trainingDates[dateStr] = p.colorHue;
+                                }
                             } catch (e) { console.error("Skipping invalid date:", trainingTime); }
                         }
                     });
@@ -629,6 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            updateProjectColorStyles(trainingDates);
             initializeCalendar();
         });
     };

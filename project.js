@@ -63,7 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageViewerContent = document.getElementById('image-viewer-content');
     const addMaterialModal = document.getElementById('add-material-modal');
     const closeAddMaterialModalBtn = addMaterialModal.querySelector('.close-btn');
-    const materialTypeSelection = document.getElementById('material-type-selection');
+    const showAddMaterialModalBtn = document.getElementById('show-add-material-modal-btn');
+    const addMaterialForm = document.getElementById('add-material-form');
+    const materialParticipantSelect = document.getElementById('material-participant-select');
+    const materialTypeSelect = document.getElementById('material-type-select');
+    const materialDynamicFormContent = document.getElementById('material-dynamic-form-content');
     const projectActionsWidget = document.getElementById('project-actions-widget');
     const archiveProjectBtn = document.getElementById('archive-project-btn');
     const deleteProjectBtn = document.getElementById('delete-project-btn');
@@ -96,11 +100,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (materialsWidget) {
         const header = materialsWidget.querySelector('h2');
-        header.classList.add('collapsible-header');
         const content = document.getElementById('materials-content');
+
+        // Collapse by default
+        materialsWidget.classList.add('collapsed');
+        content.classList.add('hidden');
+
         header.addEventListener('click', () => {
-            const isCollapsed = content.classList.toggle('hidden');
-            header.parentElement.classList.toggle('collapsed', isCollapsed);
+            const isNowHidden = content.classList.toggle('hidden');
+            materialsWidget.classList.toggle('collapsed', isNowHidden);
         });
     }
 
@@ -201,6 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'tasks':
                     renderTaskForm(itemEl, username, itemId, data);
                     break;
+                case 'notes':
+                    renderNoteForm(itemEl, username, itemId, data);
+                    break;
             }
         }
     });
@@ -254,27 +265,130 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // --- MODAL HANDLING ---
+    const hideAddMaterialModal = () => {
+        addMaterialModal.classList.remove('visible');
+        addMaterialForm.reset();
+        materialDynamicFormContent.innerHTML = '';
+    };
 
-    closeAddMaterialModalBtn.addEventListener('click', () => addMaterialModal.classList.remove('visible'));
+    closeAddMaterialModalBtn.addEventListener('click', hideAddMaterialModal);
+    window.addEventListener('click', (e) => { 
+        if (e.target === addMaterialModal) hideAddMaterialModal();
+    });
 
-    materialTypeSelection.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-            const type = e.target.dataset.type;
-            const username = addMaterialModal.dataset.username;
-            const container = document.querySelector(`.material-items-container[data-username="${username}"]`);
-            if (!container) return;
+    showAddMaterialModalBtn.addEventListener('click', () => {
+        // Reset form state
+        addMaterialForm.reset();
+        materialDynamicFormContent.innerHTML = '';
 
-            const formContainer = document.createElement('div');
-            container.prepend(formContainer);
+        const participantGroup = document.getElementById('material-participant-group');
+        
+        if (canEditMaterials) {
+            participantGroup.style.display = 'block';
+            materialParticipantSelect.innerHTML = '<option value="__general">Общий материал</option>';
+            Object.keys(projectMembers).forEach(username => {
+                const option = document.createElement('option');
+                option.value = username;
+                option.textContent = username;
+                materialParticipantSelect.appendChild(option);
+            });
+        } else {
+            // For regular users, hide the selector and default to themselves
+            participantGroup.style.display = 'none';
+        }
+        
+        addMaterialModal.classList.add('visible');
+    });
 
-            switch (type) {
-                case 'party': renderPartyForm(formContainer, username); break;
-                case 'costume': renderCostumeForm(formContainer, username); break;
-                case 'task': renderTaskForm(formContainer, username); break;
-            }
-            addMaterialModal.classList.remove('visible');
+    materialTypeSelect.addEventListener('change', (e) => {
+        const type = e.target.value;
+        materialDynamicFormContent.innerHTML = ''; // Clear previous form
+
+        switch (type) {
+            case 'party':
+                materialDynamicFormContent.innerHTML = `
+                    <div class="form-group"><input type="text" id="material-name" placeholder="Название" required></div>
+                    <div class="form-group"><textarea id="material-description" placeholder="Описание"></textarea></div>
+                    <div class="form-group"><label for="material-photo">Изображение</label><input type="file" id="material-photo" accept="image/*"></div>`;
+                break;
+            case 'costume':
+                materialDynamicFormContent.innerHTML = `
+                    <div class="form-group"><input type="text" id="material-name" placeholder="Название предмета" required></div>
+                    <div class="form-group"><input type="text" id="material-link" placeholder="Ссылка"></div>
+                    <div class="form-group"><label for="material-photo">Изображение</label><input type="file" id="material-photo" accept="image/*"></div>`;
+                break;
+            case 'task':
+                materialDynamicFormContent.innerHTML = `
+                    <div class="form-group"><input type="text" id="material-name" placeholder="Название задачи" required></div>
+                    <div class="form-group"><textarea id="material-description" placeholder="Описание"></textarea></div>`;
+                break;
+            case 'note':
+                materialDynamicFormContent.innerHTML = `
+                    <div class="form-group"><input type="text" id="material-name" placeholder="Название" required></div>
+                    <div class="form-group"><textarea id="material-description" placeholder="Описание"></textarea></div>
+                    <div class="form-group"><label for="material-photo">Изображение</label><input type="file" id="material-photo" accept="image/*"></div>`;
+                break;
         }
     });
+
+    addMaterialForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const type = materialTypeSelect.value;
+        const name = document.getElementById('material-name')?.value.trim();
+        const photoFile = document.getElementById('material-photo')?.files[0];
+
+        if (!type || !name) {
+            alert('Пожалуйста, выберите тип и введите название.');
+            return;
+        }
+        
+        const targetUser = canEditMaterials ? materialParticipantSelect.value : loggedInUser;
+        const materialTypePlural = type + 's'; // e.g., 'note' -> 'notes'
+
+        // Show a loading indicator if you have one
+        // e.g., submitButton.disabled = true; submitButton.textContent = 'Сохранение...';
+
+        let imageUrl = null;
+        if (photoFile) {
+            try {
+                imageUrl = await uploadImage(photoFile);
+            } catch (error) {
+                alert('Не удалось загрузить изображение. Попробуйте сохранить без него.');
+                // Re-enable button and return
+                // e.g., submitButton.disabled = false; submitButton.textContent = 'Сохранить';
+                return;
+            }
+        }
+
+        let data = { name };
+
+        switch (type) {
+            case 'party':
+            case 'note':
+                 data.description = document.getElementById('material-description')?.value.trim();
+                 break;
+            case 'costume':
+                data.link = document.getElementById('material-link')?.value.trim();
+                break;
+            case 'task':
+                data.description = document.getElementById('material-description')?.value.trim();
+                data.status = 'incomplete';
+                break;
+        }
+
+        // If an image was uploaded, add it to the data
+        if (imageUrl) {
+            data.photos = {};
+            const newPhotoKey = database.ref().push().key;
+            data.photos[newPhotoKey] = imageUrl;
+        }
+        
+        projectRef.child('materials').child(targetUser).child(materialTypePlural).push().set(data);
+
+        hideAddMaterialModal();
+    });
+
 
     closeImageViewerBtn.addEventListener('click', () => imageViewerModal.classList.remove('visible'));
     document.getElementById('image-viewer-delete-btn').addEventListener('click', () => {
@@ -290,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
             imageViewerModal.classList.remove('visible');
         }
         if (e.target === addMaterialModal) {
-            addMaterialModal.classList.remove('visible');
+            hideAddMaterialModal();
         }
     });
 
@@ -299,24 +413,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderMaterials = (members, materials = {}) => {
         const materialsContent = document.getElementById('materials-content');
         materialsContent.innerHTML = '';
-        const memberUsernames = members ? Object.keys(members) : [];
 
-        if (memberUsernames.length === 0) {
-            materialsContent.innerHTML = '<p style="padding: 0.75rem 0;">Сначала добавьте участников в проект.</p>';
+        showAddMaterialModalBtn.style.display = canEditMaterials ? 'block' : 'none';
+
+        const usersWithMaterials = Object.keys(materials || {}).filter(u => u !== '__general');
+        const generalMaterialsExist = Object.keys(materials?.__general || {}).length > 0;
+
+        // If no materials at all (including general), show message and return
+        if (usersWithMaterials.length === 0 && !generalMaterialsExist) {
+            materialsContent.innerHTML = '<p style="padding: 0.75rem 0;">Материалов пока нет.</p>';
             return;
         }
 
-        memberUsernames.forEach(username => {
-            const userMaterials = materials[username] || {};
+        let hasAnyContent = false; // Keep this to determine overall message if needed
+
+        const renderSectionForUser = (username) => {
+            const userMaterials = materials?.[username] || {};
+
+            // Only render if there are materials for this user
+            if (Object.keys(userMaterials).length === 0) {
+                return;
+            }
+
+            hasAnyContent = true; // Mark that content was rendered
             const userContainer = document.createElement('div');
             userContainer.className = 'material-user-container';
             userContainer.dataset.username = username;
 
-            const addButtonHTML = canEditMaterials ? `<button class="add-material-btn" data-username="${username}">+</button>` : '';
+            const headerText = username === '__general' ? 'Общие материалы' : username;
+            
             userContainer.innerHTML = `
                 <div class="material-user-header">
-                    <h3>${username}</h3>
-                    ${addButtonHTML}
+                    <h3>${headerText}</h3>
                 </div>
                 <div class="material-items-container" data-username="${username}"></div>
             `;
@@ -328,15 +456,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     Object.entries(userMaterials[type]).forEach(([id, data]) => {
                         const itemContainer = document.createElement('div');
                         itemsContainer.appendChild(itemContainer);
-                        renderFunc(itemContainer, username, id, data);
+                        renderFunc(itemContainer, username, id, data); // canEditMaterials is a global var
                     });
                 }
             };
-            
+
             renderAllItems('parties', renderPartyItem);
             renderAllItems('costumes', renderCostumeItem);
             renderAllItems('tasks', renderTaskItem);
+            renderAllItems('notes', renderNoteItem);
+
+            // No need for itemsContainer.children.length === 0 check here,
+            // as we already filtered out users without materials
+        }
+
+        // Render general materials first if they exist
+        if (generalMaterialsExist) {
+            renderSectionForUser('__general');
+        }
+
+        // Then render all other users who have materials
+        usersWithMaterials.forEach(username => {
+            renderSectionForUser(username);
         });
+
+        // This final check is probably redundant now, but harmless.
+        if (!hasAnyContent) {
+            materialsContent.innerHTML = '<p style="padding: 0.75rem 0;">Материалов пока нет.</p>';
+        }
     };
 
     const renderPartyItem = (container, username, partyId, partyData) => {
@@ -404,6 +551,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${actionsHTML}
             </div>
             <p>${taskData.description || ''}</p>
+        `;
+    };
+
+    const renderNoteItem = (container, username, noteId, noteData) => {
+        const actionsHTML = canEditMaterials ? `
+            <div class="material-item-actions">
+                <button class="edit-material-btn" title="Редактировать">✏️</button>
+                <button class="delete-material-btn" title="Удалить">🗑️</button>
+            </div>` : '';
+
+        const photosHTML = noteData.photos ? Object.entries(noteData.photos).map(([photoId, url]) => `
+            <div class="photo-thumbnail" data-photoid="${photoId}"><img src="${url}" alt="Фото заметки"></div>`).join('') : '';
+
+        container.className = 'material-item';
+        container.dataset.id = noteId;
+        container.dataset.type = 'notes';
+        container.innerHTML = `
+            <div class="material-item-header">
+                <h4>Заметка: ${noteData.name}</h4>
+                ${actionsHTML}
+            </div>
+            <p>${noteData.description || ''}</p>
+            <div class="photo-gallery">${photosHTML}</div>
+            <input type="file" class="add-photo-input" multiple accept="image/*" style="display:none;">
+            <button class="add-photo-btn ${canEditMaterials ? '' : 'hidden'}">Добавить фото</button>
         `;
     };
 
@@ -496,6 +668,37 @@ document.addEventListener('DOMContentLoaded', () => {
         container.querySelector('.cancel-btn').onclick = () => {
             if (isEditing) {
                 renderTaskItem(container, username, taskId, existingData);
+            } else {
+                container.remove();
+            }
+        };
+    };
+
+    const renderNoteForm = (container, username, noteId = null, existingData = {}) => {
+        const isEditing = !!noteId;
+        container.className = 'material-item add-form';
+        container.innerHTML = `
+            <h4>${isEditing ? 'Редактировать заметку' : 'Новая заметка'}</h4>
+            <div class="form-group"><input type="text" placeholder="Название" value="${existingData.name || ''}"></div>
+            <div class="form-group"><textarea placeholder="Описание">${existingData.description || ''}</textarea></div>
+            <button class="save-btn">Сохранить</button>
+            <button class="cancel-btn">Отмена</button>
+        `;
+        container.querySelector('.save-btn').onclick = () => {
+            const name = container.querySelector('input').value.trim();
+            if (!name) { alert('Название не может быть пустым.'); return; }
+            const description = container.querySelector('textarea').value.trim();
+            
+            const ref = isEditing 
+                ? projectRef.child('materials').child(username).child('notes').child(noteId)
+                : projectRef.child('materials').child(username).child('notes').push();
+            
+            ref.set({ name, description, photos: existingData.photos || null });
+            if (!isEditing) container.remove();
+        };
+        container.querySelector('.cancel-btn').onclick = () => {
+            if (isEditing) {
+                renderNoteItem(container, username, noteId, existingData);
             } else {
                 container.remove();
             }
